@@ -5050,7 +5050,7 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "RPROG Capacitor, Specifies max current.\n1.2K, 1000mA."
+	(text "RPROG Capacitor, Specifies max current.\n3K, 400mA."
 		(exclude_from_sim no)
 		(at 99.568 160.528 0)
 		(effects
@@ -7346,7 +7346,7 @@
 				)
 			)
 		)
-		(property "Value" "1.2K"
+		(property "Value" "3K"
 			(at 99.06 156.21 90)
 			(show_name no)
 			(do_not_autoplace no)
