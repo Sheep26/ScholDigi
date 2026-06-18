@@ -1,0 +1,3 @@
+TP4056: https://dlnmh9ip6v2uc.cloudfront.net/datasheets/Prototyping/TP4056.pdf
+DW01: https://cdn.sparkfun.com/assets/learn_tutorials/2/5/1/DW01-P_DataSheet_V10.pdf
+FS8205A: https://www.snapeda.com/parts/FS8205A/Fortune%20Semiconductor/datasheet/
