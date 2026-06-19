@@ -6,7 +6,7 @@
 "C11","1","10pF","","","","Capacitor_SMD:C_0603_1608Metric",""
 "C13","1","1.0uF","","","","Capacitor_SMD:C_0603_1608Metric",""
 "D1,D2","2","LED","","","","LED_SMD:LED_0603_1608Metric",""
-"D3,D5,D6,D7","4","D","","","","Diode_SMD:D_0603_1608Metric",""
+"D3,D5,D6,D7","4","SS14","","","","Diode_SMD:D_SMA",""
 "D4","1","PESD0402-140","","","","PESD0402-140:DIO_PESD0402-140",""
 "J1","1","USB_C_Receptacle_PowerOnly_6P","","","","Connector_USB:USB_C_Receptacle_XKB_U262-16XN-4BVC11","https://www.usb.org/sites/default/files/documents/usb_type-c.zip"
 "J2","1","USB_C_Receptacle_USB2.0_14P","","","","Connector_USB:USB_C_Receptacle_XKB_U262-16XN-4BVC11","https://www.usb.org/sites/default/files/documents/usb_type-c.zip"
