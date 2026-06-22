@@ -3332,7 +3332,7 @@
 			)
 		)
 		(property "Value" "GPS Antenna coaxial"
-			(at 2.5 3.5 270)
+			(at 3 3.5 270)
 			(layer "F.Fab")
 			(uuid "7566e017-1c29-4436-a872-90611a16ac37")
 			(effects
@@ -6410,7 +6410,7 @@
 			)
 		)
 		(property "Value" "0.1uF"
-			(at 3.5 0 0)
+			(at 3.5 1.5 0)
 			(layer "F.Fab")
 			(uuid "f25dadb0-1308-475a-b54d-fae10e1e3ad5")
 			(effects
