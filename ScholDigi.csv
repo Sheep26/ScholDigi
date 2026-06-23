@@ -9,7 +9,7 @@
 8;"D3, D5, D6, D7";"D_SMA";4;"SS14";;;
 9;"D4";"DIO_PESD0402-140";1;"PESD0402-140";;;
 10;"J2, J5";"USB_C_Receptacle_XKB_U262-16XN-4BVC11";2;"USB_C_Receptacle_USB2.0_14P";;;
-11;"J3";"JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical";1;"Battery JST";;;
+11;"J3";"JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical";1;"Battery JST";;;
 12;"J4";"U.FL_Hirose_U.FL-R-SMT-1_Vertical";1;"GPS Antenna coaxial";;;
 13;"L1";"R_0603_1608Metric";1;"2.66Ω";;;
 14;"L2";"L_0603_1608Metric";1;"1uH";;;
