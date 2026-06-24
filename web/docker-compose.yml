@@ -1,0 +1,25 @@
+volumes:
+  db:
+
+services:
+  site:
+    image: scholdigi:latest
+    container_name: scholdigi
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "6700:80"
+
+  db:
+    image: mysql:latest
+    container_name: scholdigi-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: c(n#ifise$$nm0(d012md3#7cnm&mvorkwks4cra
+    ports:
+      - "3306:3306"
+    volumes:
+      - type: volume
+        source: db
+        target: /var/lib/mysql
