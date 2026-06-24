@@ -773,7 +773,7 @@
         "uuid": "799505b5-cafe-42fb-859d-de725ec7ace2"
       }
     ],
-    "used_designators": "TP5-6",
+    "used_designators": "#PWR17,#PWR39,J1,J6,TP5-6",
     "variants": []
   },
   "sheets": [
