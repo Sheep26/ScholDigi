@@ -7437,6 +7437,16 @@
 	)
 	(wire
 		(pts
+			(xy 104.14 53.34) (xy 104.14 57.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0435ebc7-0eff-4056-aafc-6b105efaa917")
+	)
+	(wire
+		(pts
 			(xy 176.53 52.07) (xy 176.53 54.61)
 		)
 		(stroke
@@ -7727,6 +7737,16 @@
 	)
 	(wire
 		(pts
+			(xy 102.87 53.34) (xy 104.14 53.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2666d22a-7019-44ee-b2da-4b15da3d48e7")
+	)
+	(wire
+		(pts
 			(xy 86.36 43.18) (xy 86.36 49.53)
 		)
 		(stroke
@@ -7894,6 +7914,16 @@
 			(type default)
 		)
 		(uuid "3e5fba78-fff1-4805-9037-9cd23db0354a")
+	)
+	(wire
+		(pts
+			(xy 104.14 57.15) (xy 106.68 57.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3ee0072f-ce5f-42e2-bee5-0f953b13b979")
 	)
 	(wire
 		(pts
@@ -8997,6 +9027,16 @@
 	)
 	(wire
 		(pts
+			(xy 101.6 59.69) (xy 106.68 59.69)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "be100599-0de4-407d-97f9-3c592477b235")
+	)
+	(wire
+		(pts
 			(xy 233.68 40.64) (xy 236.22 40.64)
 		)
 		(stroke
@@ -9587,6 +9627,30 @@
 			)
 		)
 	)
+	(global_label "IO2"
+		(shape input)
+		(at 181.61 109.22 270)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "1c6e2797-f29e-4803-9800-5d47fca243a8")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 181.61 115.35 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
 	(global_label "VAUX"
 		(shape input)
 		(at 246.38 152.4 0)
@@ -9632,6 +9696,30 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
+			)
+		)
+	)
+	(global_label "IO3"
+		(shape input)
+		(at 101.6 59.69 90)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2662e4b4-a621-46f5-bf5e-a195899e133f")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 101.6 53.56 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
 			)
 		)
 	)
@@ -9744,6 +9832,30 @@
 		(uuid "327af5b3-9fe8-4d53-925e-d4820976ee23")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 82.77 34.29 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "IO3"
+		(shape input)
+		(at 190.5 109.22 270)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "47164d33-fae7-45ce-b76a-98c1e7ea8d9c")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 190.5 115.35 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10067,6 +10179,30 @@
 			)
 		)
 	)
+	(global_label "IO2"
+		(shape input)
+		(at 102.87 53.34 90)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c74a298f-229f-4feb-ab7c-76b97ab24648")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 102.87 47.21 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
 	(global_label "VAUX"
 		(shape input)
 		(at 203.2 158.75 180)
@@ -10261,6 +10397,84 @@
 			(project "ScholDigi"
 				(path "/799505b5-cafe-42fb-859d-de725ec7ace2"
 					(reference "#PWR025")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 190.5 109.22 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "08acc7b5-387d-4c5c-acd6-d9af122c28bc")
+		(property "Reference" "TP6"
+			(at 193.04 105.41 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "IO3"
+			(at 193.04 107.1879 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm"
+			(at 195.58 109.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 195.58 109.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 190.5 109.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "6024be53-6343-4def-8c9d-fbebd17a6f09")
+		)
+		(instances
+			(project "ScholDigi"
+				(path "/799505b5-cafe-42fb-859d-de725ec7ace2"
+					(reference "TP6")
 					(unit 1)
 				)
 			)
@@ -11955,6 +12169,84 @@
 			(project "ScholDigi"
 				(path "/799505b5-cafe-42fb-859d-de725ec7ace2"
 					(reference "#PWR013")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 181.61 109.22 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "3a16cdb1-1752-4de5-8c94-9177a3a16eda")
+		(property "Reference" "TP5"
+			(at 183.896 105.41 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "IO2"
+			(at 184.15 107.1879 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D2.0mm"
+			(at 186.69 109.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 186.69 109.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 181.61 109.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "3f7a24b0-f7fc-48d8-b07c-a382f088b0c8")
+		)
+		(instances
+			(project "ScholDigi"
+				(path "/799505b5-cafe-42fb-859d-de725ec7ace2"
+					(reference "TP5")
 					(unit 1)
 				)
 			)
@@ -15455,7 +15747,7 @@
 			)
 		)
 		(property "Value" "0.1uF"
-			(at 98.298 55.372 0)
+			(at 92.202 55.88 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
