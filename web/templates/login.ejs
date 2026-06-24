@@ -4,7 +4,7 @@
 
         <form class="flex column gap-1-5 centered" action="/api/login" method="POST" onsubmit="checkLogin(event)">
             <%- renderUtils.textField('email', 'Email') %>
-            <%- renderUtils.textField('passwd', 'Password') %>
+            <%- renderUtils.textField('passwd', 'Password', 'password') %>
 
             <input type="submit" value="Login">
             <a class="white bold no-decorations" href="/create_account">No account, create one.</a>

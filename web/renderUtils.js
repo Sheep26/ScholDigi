@@ -1,4 +1,4 @@
-function textField(id, name, passwd=false) {
+function textField(id, name, type="") {
     /*
     * This function is part of a utility passed through to the ejs renderer.
     *
@@ -7,7 +7,7 @@ function textField(id, name, passwd=false) {
 
     return `
 <div class="text-field">
-    <input type="${passwd ? 'password' : 'text'}" id="${id}" name="${id}" placeholder=" " required="">
+    <input type="${type}" id="${id}" name="${id}" placeholder=" " required="">
 
     <label for="${id}">${name}</label>
 
