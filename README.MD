@@ -1,4 +1,2 @@
 # Scholarship Digitech.
-This is my scholarship Technology project for NZQA.
-
-It is a fitness tracker designed for tracking your tramps, hikes, walks, runs and cycles.
+This is my NZQA scholarship technology project. It is a small device which can fit in your pocket or bag, and will track your tramping, hiking, walking, running, cycling, skiing, etc. It uses a Ublox max-m10s gpu module on a fully custom pcb, with an esp32-c6, battery management system, power management system, serial connection and 2 usb ports for 2 different reasons (one is charging the other is flashing firmware which can also be done from testpoints in case there is too much signal interference).
