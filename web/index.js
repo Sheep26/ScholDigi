@@ -7,12 +7,16 @@ import path from 'path';
 import { SessionManager, Session } from './sessions/sessionManager.js';
 import cookieParser from 'cookie-parser';
 import renderUtils from './renderUtils.js';
+import config from "./config.json" with { type: "json" };
+import { DatabaseManager } from './db/databaseManager.js';
 
 // Get the path the website is being run out of.
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const sessionManager = new SessionManager();
+const db = new DatabaseManager(config.mysql_db_name);
+
 const app = express();
 const PORT = 8080;
 
@@ -45,7 +49,7 @@ app.use(async (req, res, next) => {
     res.render('base', { title: page, content: page, renderUtils: renderUtils });
 });
 
-app.listen(PORT, '0.0.0.0', function (err) {
+app.listen(PORT, '0.0.0.0', async function (err) {
     /*
     * This function is the event handler for the web server.
     * It is ran when the web server starts and when it errors.
