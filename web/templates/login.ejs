@@ -2,10 +2,18 @@
     <div class="flex card column centered gap-1-5">
         <span class="bold">Login</span>
 
-        <%- renderUtils.textField('email', 'Email') %>
-        <%- renderUtils.textField('passwd', 'Password') %>
+        <form action="/api/login" method="POST" onsubmit="checkLogin(event)">
+            <%- renderUtils.textField('email', 'Email') %>
+            <%- renderUtils.textField('passwd', 'Password') %>
 
-        <input type="submit" value="Login">
-        <a class="white bold no-decorations" href="/create_account">No account, create one.</a>
+            <input type="submit" value="Login">
+            <a class="white bold no-decorations" href="/create_account">No account, create one.</a>
+        </form>
     </div>
 </div>
+
+<script>
+    async function checkLogin() {
+        event.stopPropagation();
+    }
+</script>
