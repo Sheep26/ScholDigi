@@ -9,7 +9,7 @@ services:
     depends_on:
       - db
     ports:
-      - "6700:80"
+      - "6700:8080"
 
   db:
     image: mysql:latest
@@ -18,7 +18,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: c(n#ifise$$nm0(d012md3#7cnm&mvorkwks4cra
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - type: volume
         source: db
