@@ -539,7 +539,7 @@
     "last_paths": {
       "idf": "",
       "netlist": "",
-      "plot": "",
+      "plot": "gerbs/",
       "specctra_dsn": "",
       "vrml": ""
     },
