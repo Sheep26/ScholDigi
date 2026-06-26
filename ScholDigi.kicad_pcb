@@ -16107,6 +16107,18 @@
 			(justify left bottom)
 		)
 	)
+	(gr_text "BAT"
+		(at 123 99.5 0)
+		(layer "F.SilkS")
+		(uuid "4ccf55c8-fed9-42fa-94dc-4358c72a006b")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+			(justify left bottom)
+		)
+	)
 	(gr_text "RST"
 		(at 126 81 0)
 		(layer "F.SilkS")
@@ -16119,14 +16131,134 @@
 			(justify left bottom)
 		)
 	)
+	(gr_text "[Verse 1: David Gilmour]\nTicking away\nThe moments that make up a dull day\nYou fritter and waste the hours\nIn an offhand way\nKicking around on a piece of ground\nIn your hometown\nWaiting for someone\nOr something to show you the way\n\n[Chorus: Richard Wright]\nTired of lying in the sunshine\nStaying home to watch the rain\nYou are young and life is long\nAnd there is time to kill today\nAnd then one day you find\nTen years have got behind you\nNo one told you when to run\nYou missed the starting gun\nYou might also like\nmeet the grahams\nKendrick Lamar\nEclipse\nPink Floyd\nTHE HEART PART 6\nDrake\n[Guitar Solo]\n\n[Verse 2: David Gilmour]\nAnd you run, and you run\nTo catch up with the sun, but it's sinking\nAnd racing around\nTo come up behind you again\nThe sun is the same in a relative way\nBut you're older\nShorter of breath\nAnd one day closer to death\n\n[Chorus: Richard Wright]\nEvery year is getting shorter\nNever seem to find the time\nPlans that either come to naught\nOr half a page of scribbled lines\nHanging on in quiet desperation\nIs the English way\nThe time is gone, the song is over\nThought I'd something more to say\n\n[Part II: Breathe (In the Air) [Reprise]]\n\n[Verse: David Gilmour]\nHome, home again\nI like to be here when I can\nWhen I come home cold and tired\nIt's good to warm my bones beside the fire\nFar away across the field\nThe tolling of the iron bell\nCalls the faithful to their knees\nTo hear the softly spoken magic spells"
+		(at 140.5 58.5 90)
+		(layer "B.SilkS")
+		(uuid "d6355ed3-6c75-452d-b4f7-b0688a4e2e42")
+		(effects
+			(font
+				(size 0.3 0.3)
+				(thickness 0.02)
+			)
+			(justify left bottom mirror)
+		)
+	)
+	(gr_text "Any sufficiently advanced technology is indistinguishable from magic - Arthur C Clark"
+		(at 154.5 69.5 0)
+		(layer "B.SilkS")
+		(uuid "5eb8d315-c327-46b9-9571-6e24c0071a37")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.1)
+			)
+			(justify left bottom mirror)
+		)
+	)
+	(gr_text "Привіт світ"
+		(at 92.5 63.5 90)
+		(layer "B.SilkS")
+		(uuid "fd9c148b-3598-4155-9db9-658b86eec395")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.1)
+			)
+			(justify left bottom mirror)
+		)
+	)
+	(gr_text "Made in China"
+		(at 127.4 76.5 0)
+		(layer "B.SilkS")
+		(uuid "82a0db9d-2768-4514-9676-6b996d0c1b55")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+			(justify left bottom mirror)
+		)
+	)
+	(gr_text "Pineapple on pizza is gods creation"
+		(at 130 71.5 0)
+		(layer "B.SilkS")
+		(uuid "791369db-e4fa-42a0-94ac-ef8bce07ad61")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+			(justify left bottom mirror)
+		)
+	)
+	(gr_text "It is by pure will alone\nI set myself to this task"
+		(at 149 78.5 0)
+		(layer "B.SilkS")
+		(uuid "6168e8ec-5464-491e-981e-45e7eb0c28f9")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+			(justify left bottom mirror)
+		)
+	)
+	(gr_text "Hi Pookie <3"
+		(at 151.5 55.5 0)
+		(layer "B.SilkS")
+		(uuid "d2c8f3be-1495-466f-b01d-04817bd84d97")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+			(justify left bottom mirror)
+		)
+	)
+	(gr_text "Peekabooo"
+		(at 99.5 76.5 90)
+		(layer "B.SilkS")
+		(uuid "35e3fa6a-e790-46d3-8458-ac2b0d45a6e1")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+			(justify left bottom mirror)
+		)
+	)
+	(gr_text "Schrödinger's PCB"
+		(at 112.5 74 0)
+		(layer "B.SilkS")
+		(uuid "7ce6270a-d237-42cf-8ac5-d4aa50cfe63e")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+			(justify left bottom mirror)
+		)
+	)
 	(gr_text "Now with 50% more magic smoke"
-		(at 121 64 0)
+		(at 96.5 63 90)
 		(layer "B.SilkS")
 		(uuid "583d77ba-93ce-469b-8a77-a886d3f7da77")
 		(effects
 			(font
 				(size 1.15 1.15)
 				(thickness 0.1)
+			)
+			(justify left bottom mirror)
+		)
+	)
+	(gr_text "Please do not the cat."
+		(at 153.5 87.5 0)
+		(layer "B.SilkS")
+		(uuid "78798879-8197-4d30-9222-deafc80efa61")
+		(effects
+			(font
+				(size 1.2 1.2)
+				(thickness 0.15)
 			)
 			(justify left bottom mirror)
 		)
@@ -16139,6 +16271,18 @@
 			(font
 				(size 1.25 1.25)
 				(thickness 0.1)
+			)
+			(justify left bottom mirror)
+		)
+	)
+	(gr_text "Remove before flight."
+		(at 134 91 0)
+		(layer "B.SilkS")
+		(uuid "377fa84d-18c2-415d-a3a6-85b8c3377929")
+		(effects
+			(font
+				(size 2 2)
+				(thickness 0.2)
 			)
 			(justify left bottom mirror)
 		)
