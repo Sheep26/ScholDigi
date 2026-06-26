@@ -16131,18 +16131,6 @@
 			(justify left bottom)
 		)
 	)
-	(gr_text "[Verse 1: David Gilmour]\nTicking away\nThe moments that make up a dull day\nYou fritter and waste the hours\nIn an offhand way\nKicking around on a piece of ground\nIn your hometown\nWaiting for someone\nOr something to show you the way\n\n[Chorus: Richard Wright]\nTired of lying in the sunshine\nStaying home to watch the rain\nYou are young and life is long\nAnd there is time to kill today\nAnd then one day you find\nTen years have got behind you\nNo one told you when to run\nYou missed the starting gun\nYou might also like\nmeet the grahams\nKendrick Lamar\nEclipse\nPink Floyd\nTHE HEART PART 6\nDrake\n[Guitar Solo]\n\n[Verse 2: David Gilmour]\nAnd you run, and you run\nTo catch up with the sun, but it's sinking\nAnd racing around\nTo come up behind you again\nThe sun is the same in a relative way\nBut you're older\nShorter of breath\nAnd one day closer to death\n\n[Chorus: Richard Wright]\nEvery year is getting shorter\nNever seem to find the time\nPlans that either come to naught\nOr half a page of scribbled lines\nHanging on in quiet desperation\nIs the English way\nThe time is gone, the song is over\nThought I'd something more to say\n\n[Part II: Breathe (In the Air) [Reprise]]\n\n[Verse: David Gilmour]\nHome, home again\nI like to be here when I can\nWhen I come home cold and tired\nIt's good to warm my bones beside the fire\nFar away across the field\nThe tolling of the iron bell\nCalls the faithful to their knees\nTo hear the softly spoken magic spells"
-		(at 140.5 58.5 90)
-		(layer "B.SilkS")
-		(uuid "d6355ed3-6c75-452d-b4f7-b0688a4e2e42")
-		(effects
-			(font
-				(size 0.3 0.3)
-				(thickness 0.02)
-			)
-			(justify left bottom mirror)
-		)
-	)
 	(gr_text "Any sufficiently advanced technology is indistinguishable from magic - Arthur C Clark"
 		(at 154.5 69.5 0)
 		(layer "B.SilkS")
@@ -16203,6 +16191,18 @@
 			(justify left bottom mirror)
 		)
 	)
+	(gr_text "Anything can be a smoke machine if you try hard enough"
+		(at 150 100.5 0)
+		(layer "B.SilkS")
+		(uuid "9730e472-1f49-474a-ad4c-06cd23c73b08")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+			(justify left bottom mirror)
+		)
+	)
 	(gr_text "Hi Pookie <3"
 		(at 151.5 55.5 0)
 		(layer "B.SilkS")
@@ -16216,7 +16216,7 @@
 		)
 	)
 	(gr_text "Peekabooo"
-		(at 99.5 76.5 90)
+		(at 98 68.5 90)
 		(layer "B.SilkS")
 		(uuid "35e3fa6a-e790-46d3-8458-ac2b0d45a6e1")
 		(effects
@@ -16259,18 +16259,6 @@
 			(font
 				(size 1.2 1.2)
 				(thickness 0.15)
-			)
-			(justify left bottom mirror)
-		)
-	)
-	(gr_text "Anything can be a smoke machine if you try hard enough"
-		(at 150 100.5 0)
-		(layer "B.SilkS")
-		(uuid "9730e472-1f49-474a-ad4c-06cd23c73b08")
-		(effects
-			(font
-				(size 1.25 1.25)
-				(thickness 0.1)
 			)
 			(justify left bottom mirror)
 		)
