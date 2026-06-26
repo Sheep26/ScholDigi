@@ -773,7 +773,7 @@
         "uuid": "799505b5-cafe-42fb-859d-de725ec7ace2"
       }
     ],
-    "used_designators": "#PWR40,R21-22",
+    "used_designators": "J6-7,#PWR40,R21-22",
     "variants": []
   },
   "sheets": [
