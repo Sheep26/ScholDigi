@@ -2,3 +2,5 @@
 .history
 web/node_modules
 web/config.json
+gerbs
+production
