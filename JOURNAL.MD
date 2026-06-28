@@ -20,7 +20,7 @@ We also added a JST connector to the PCB to make it possible to connect a batter
 In this entry, we converted the schematic into an actual kicad PCB. This means it's no longer a plan, it can be an actual thing.  
 I've placed all the components in their position. Organised the PCB and routed it.  
 Also, I've added a CP2102 serial UART to usb chip to the PCB as well in this entry.  
-This allows us to establish a serial connection to the ESP32 over USB instead of directly connecting to the RX0 and TX0 pins on the ESP32. This should make flashing firmware and debugging much easier.  
+This allows us to establish a serial connection to the ESP32 over USB instead of directly connecting to the RX0 and TX0 pins on the ESP32. This should make flashing firmware and debugging much easier, just incase, there are still testpoints on the board for RX0 and TX0.  
 And I defined the Edge Cuts in the PCB in this entry as well.  
 ![Image of the kicad PCB](assets/pcbimg1.png)  
 ![Image of 3D model of the PCB](assets/pcbmodel1.png)  
