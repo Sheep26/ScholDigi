@@ -1,0 +1,9 @@
+TP4056: https://dlnmh9ip6v2uc.cloudfront.net/datasheets/Prototyping/TP4056.pdf
+DW01: https://cdn.sparkfun.com/assets/learn_tutorials/2/5/1/DW01-P_DataSheet_V10.pdf
+FS8205A: https://www.snapeda.com/parts/FS8205A/Fortune%20Semiconductor/datasheet/
+PESD0402-140: https://www.snapeda.com/parts/PESD0402-140/TE%20Connectivity/datasheet/
+ESP32-C6-MINI: https://documentation.espressif.com/esp32-c6-mini-1_mini-1u_datasheet_en.html
+Ublox max-m10s: https://content.u-blox.com/sites/default/files/MAX-M10S_DataSheet_UBX-20035208.pdf
+Ublox max-m10s schematic: https://cdn.sparkfun.com/assets/f/3/f/b/4/SparkFun_u-blox_GNSS_MAX-M10S_Schematic_v10.pdf
+TPS63060: https://www.ti.com/lit/ds/symlink/tps63060.pdf
+CP2102: https://www.silabs.com/documents/public/data-sheets/CP2102-9.pdf
