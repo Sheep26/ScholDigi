@@ -23,3 +23,47 @@ void gps_task(void *pvParameters) {
                 gps.encode(buffer[i]);
     }
 }
+
+double getLat() {
+    return gps.location.lat();
+}
+
+double getLng() {
+    return gps.location.lng();
+}
+
+double getKMPH() {
+    return gps.speed.kmph();
+}
+
+double getAlititude() {
+    return gps.altitude.meters();
+}
+
+int getSatellites() {
+    return gps.satellites.value();
+}
+
+uint16_t getYear() {
+    return gps.date.year();
+}
+
+uint8_t getMonth() {
+    return gps.date.month();
+}
+
+uint8_t getDay() {
+    return gps.date.day();
+}
+
+uint8_t getHour() {
+    return gps.time.hour();
+}
+
+uint8_t getMinute() {
+    return gps.time.minute();
+}
+
+uint8_t getSecond() {
+    return gps.time.second();
+}

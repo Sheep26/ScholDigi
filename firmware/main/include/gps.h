@@ -10,8 +10,27 @@
 extern "C" {
 #endif
 
-int readGPS(uint8_t *buffer);
+// GPS task.
 void gps_task(void *pvParameters);
+
+// GPS data.
+double getLat();
+double getLng();
+
+double getKMPH();
+
+double getAlititude();
+
+int getSatellites();
+
+// Date and time.
+uint16_t getYear();
+uint8_t getMonth();
+uint8_t getDay();
+
+uint8_t getHour();
+uint8_t getMinute();
+uint8_t getSecond();
 
 #ifdef __cplusplus
 }
