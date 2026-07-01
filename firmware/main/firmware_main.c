@@ -1,13 +1,16 @@
 #include <stdio.h>
 #include <inttypes.h>
+#include <pins.h>
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_chip_info.h"
 #include "esp_flash.h"
 #include "esp_system.h"
+#include "driver/uart.h"
+#include <gps.h>
 
-void app_firmware(void) {
+void app_main(void) {
     printf("Hello world!\n");
 
     /* Print chip information */
@@ -29,6 +32,29 @@ void app_firmware(void) {
 
     printf("%" PRIu32 "MB %s flash\n", flash_size / (uint32_t)(1024 * 1024), (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
     printf("Minimum free heap size: %" PRIu32 " bytes\n", esp_get_minimum_free_heap_size());
+
+    // Initalize GPS serial connection.
+
+    // Set params.
+    uart_config_t uart_config = {
+        .baud_rate = 9600,
+        .data_bits = UART_DATA_8_BITS,
+        .parity    = UART_PARITY_DISABLE,
+        .stop_bits = UART_STOP_BITS_1,
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE
+    };
+
+    // Send params to driver.
+    uart_param_config(UART_NUM_1, &uart_config);
+
+    // Set serial pins.
+    uart_set_pin(UART_NUM_1, TX_GPIO_NUM, RX_GPIO_NUM, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+
+    // Enable serial on UART num 1.
+    uart_driver_install(UART_NUM_1, GPS_BUF_SIZE, 0, 0, NULL, 0);
+
+    // Start gps task.
+    xTaskCreatePinnedToCore(gps_task, "GPS", 4096, NULL, 5, NULL, 1);
 
     for (int i = 10; i >= 0; i--) {
         printf("Restarting in %d seconds...\n", i);
