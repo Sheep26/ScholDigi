@@ -60,6 +60,10 @@ void app_main(void) {
     // Start gps task.
     xTaskCreatePinnedToCore(gps_task, "GPS", 4096, NULL, 5, NULL, 1);
 
+    // Set timezone.
+    setenv("TZ", "NZST-12NZDT,M9.5.0/02:00:00,M4.1.0/03:00:00", 1);
+    tzset();
+
     // Loop
     while (1) {
         if (!timeSetup) {
@@ -80,6 +84,17 @@ void app_main(void) {
 
             timeSetup = getDateValid() && getTimeValid();
         }
+
+        // Print time.
+        time_t now;
+        char strftime_buf[64];
+        struct tm timeinfo;
+
+        time(&now);
+        localtime_r(&now, &timeinfo);
+        strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+
+        printf("%s", strftime_buf);
     }
 
     // Reset ESP32 incase while loop ever exits.
