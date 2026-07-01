@@ -5,3 +5,4 @@ web/config.json
 gerbs
 firmware/build
 firmware/managed_components
+.vscode
