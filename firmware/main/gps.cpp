@@ -67,3 +67,7 @@ uint8_t getMinute() {
 uint8_t getSecond() {
     return gps.time.second();
 }
+
+int getLocationValid() {
+    return gps.location.isValid();
+}

@@ -56,8 +56,9 @@ void app_main(void) {
     // Start gps task.
     xTaskCreatePinnedToCore(gps_task, "GPS", 4096, NULL, 5, NULL, 1);
 
+    // Loop
     while (1) {
-        // Loop
+        
     }
 
     // This stuff should never run.

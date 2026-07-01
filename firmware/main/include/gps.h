@@ -32,6 +32,8 @@ uint8_t getHour();
 uint8_t getMinute();
 uint8_t getSecond();
 
+int getLocationValid();
+
 #ifdef __cplusplus
 }
 #endif
