@@ -56,6 +56,11 @@ void app_main(void) {
     // Start gps task.
     xTaskCreatePinnedToCore(gps_task, "GPS", 4096, NULL, 5, NULL, 1);
 
+    while (1) {
+        // Loop
+    }
+
+    // This stuff should never run.
     for (int i = 10; i >= 0; i--) {
         printf("Restarting in %d seconds...\n", i);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
