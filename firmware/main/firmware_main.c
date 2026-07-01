@@ -61,14 +61,7 @@ void app_main(void) {
         
     }
 
-    // This stuff should never run.
-    for (int i = 10; i >= 0; i--) {
-        printf("Restarting in %d seconds...\n", i);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
-
-    printf("Restarting now.\n");
+    // Reset ESP32 incase while loop ever exits.
     fflush(stdout);
-
     esp_restart();
 }
