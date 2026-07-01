@@ -33,6 +33,8 @@ uint8_t getMinute();
 uint8_t getSecond();
 
 int getLocationValid();
+int getTimeValid();
+int getDateValid();
 
 #ifdef __cplusplus
 }

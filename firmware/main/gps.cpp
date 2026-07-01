@@ -1,3 +1,5 @@
+// The point of this file is it acts as a wrapper between C++ and C allowing me to have firmware_main be in C but still use TinyGPSPlus which is in C++.
+
 #include <gps.h>
 #include <TinyGPSPlus.h>
 #include "esp_system.h"
@@ -70,4 +72,12 @@ uint8_t getSecond() {
 
 int getLocationValid() {
     return gps.location.isValid();
+}
+
+int getTimeValid() {
+    return gps.time.isValid();
+}
+
+int getDateValid() {
+    return gps.time.isValid();
 }

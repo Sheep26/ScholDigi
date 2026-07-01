@@ -9,6 +9,10 @@
 #include "esp_system.h"
 #include "driver/uart.h"
 #include <gps.h>
+#include <sys/time.h>
+#include <time.h>
+
+int timeSetup = 0;
 
 void app_main(void) {
     printf("Hello world!\n");
@@ -58,7 +62,24 @@ void app_main(void) {
 
     // Loop
     while (1) {
-        
+        if (!timeSetup) {
+            // Set date and time.
+            struct tm tm;
+            tm.tm_year = getYear() - 1990; // Current year minus EPOCH start date.
+            tm.tm_mon = getMonth();
+            tm.tm_mday = getDay();
+
+            tm.tm_hour = getHour();
+            tm.tm_min = getMinute();
+            tm.tm_sec = getSecond();
+
+            time_t t = mktime(&tm);
+
+            struct timeval now = { .tv_sec = t, .tv_usec=0 };
+            settimeofday(&now, NULL);
+
+            timeSetup = getDateValid() && getTimeValid();
+        }
     }
 
     // Reset ESP32 incase while loop ever exits.
