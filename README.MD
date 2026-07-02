@@ -23,3 +23,6 @@ CP2102 | Serial UART to USB
 ![Image 2](assets/dbe32719-a968-4452-b8ff-b36f6714a501.PNG)
 ![Image 3](assets/ce63b008-3b04-4a3b-8f5e-f39f2f6c9101.PNG)
 ![Image 4](assets/pcbmodel2.png)
+
+## PCB Image
+![PCB Image 1](assets/pcbimg2.png)
