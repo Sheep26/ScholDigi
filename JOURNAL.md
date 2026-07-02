@@ -50,10 +50,15 @@ I also swapped around some of the footprints due to part selection issues during
 ## Entry 8 - 01/07/2026
 In this entry, I've started making the firmware that the ESP32 will run.  
 I've setup an ESP-IDF environment and copied over the hello world project.  
-I also started to write the code for the connection to the GPS, I've setup TinyGPSPlus in the project and written a wrapper for it.  
+I also started to write the code for the connection to the GPS, I've setup TinyGPSPlus in the project and written a wrapper for it!  
 ![Code img1](assets/codeimg1.png)  
 ![Code img2](assets/codeimg2.png)  
 ![Code img3](assets/codeimg3.png)  
 
 ## Entry 9 - 02/07/2026
-In this entry, I finished the GPS wrapper and added the configuration to set the time in the ESP32 based from the GPS.
+In this entry, I finished the GPS wrapper and added the configuration to set the time on the ESP32 based from the GPS.  
+The reason I need a wrapper is because TinyGPSPlus is designed for C++, as a result it uses classes which means in my C objects, I can't reference TinyGPSPlus as the compiler won't know what to do with the classes.  
+The solution I found was to have another C++ object sit between it and have the header file be designed for C, doing this the source file can be C++ and it can communicate with TinyGPSPlus and the main C object.  
+![Code img4](assets/codeimg4.png)  
+![Code img5](assets/codeimg5.png)  
+![Code img6](assets/codeimg6.png)  
