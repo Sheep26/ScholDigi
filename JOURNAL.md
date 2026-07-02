@@ -1,23 +1,23 @@
 For those who will wonder where I found the dates for the Journal entry. I am logging this project in a document for NZQA alongside stardance. This is just a so that I can submit it for the scholarship subject.    
-## Entry 1 - 18/06/2026
+## Entry 1 - 18/06/2026 - Estimated time: 30 mins.
 In this entry, we've designed a battery management and charging system in kicad schematic. It uses a TP4056 battery module and is designed for lithium batteries.  
 ![Image of kicad schematic](https://stardance.hackclub.com/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NTk4MDUsInB1ciI6ImJsb2JfaWQifX0=--36ad1e77d5e41ce7aceb98233bb7c45c962fbef1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTYwMCw5MDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzV9fSwicHVyIjoidmFyaWF0aW9uIn19--3bc8a2c9d65e3b087c0c0b37dcfb642bb247bc73/Screenshot_20260618_194655.png)  
 
-## Entry 2 - 18/06/2026
+## Entry 2 - 18/06/2026 - Estimated time: 1 hour.
 In this entry, we've designed the ESP32 and GPS module in the kicad schematic.  
 The GPS module uses a Ublox max-m10s GPS module.  
 I picked this module because it allows the same 4 constellation tracking as the Ublox neo-m9 module but because it updates slower, it uses much much less power. This allows us to get better battery life out of the same batteries which for a device like this which is designed for long tramps is very important for.  
 ![Image of esp32 kicad schematic](assets/esp32img1.png)  
 ![Image of gps kicad schematic](assets/gpsimg1.png)  
 
-## Entry 3 - 19/06/2026
+## Entry 3 - 19/06/2026 - Estimated time: 1 hour.
 In this entry, we've designed the power management system from the batteries to power the rest of the PCB in the kicad schematic.  
 It uses a TPS63060 module to either scale the voltage up to 3.3v or down to 3.3v. This allows us to not undervolt the PCB and not overvolt it and inevitably blow something.  
 It uses a voltage dividor circut to maintain 3.3v.  
 We also added a JST connector to the PCB to make it possible to connect a battery.  
 ![Image of power management kicad schematic](assets/powermanagment1.png)  
 
-## Entry 4 - 22/06/2026
+## Entry 4 - 22/06/2026 - Estimated time: 4 hours.
 In this entry, we converted the schematic into an actual kicad PCB. This means it's no longer a plan, it can be an actual thing.  
 I've placed all the components in their position. Organised the PCB and routed it.  
 Also, I've added a CP2102 serial UART to usb chip to the PCB as well in this entry.  
@@ -26,17 +26,17 @@ And I defined the Edge Cuts in the PCB in this entry as well.
 ![Image of the kicad PCB](assets/pcbimg1.png)  
 ![Image of 3D model of the PCB](assets/pcbmodel1.png)  
 
-## Entry 5 - 23/06/2026
+## Entry 5 - 23/06/2026 - Estimated time: 2 hours.
 In this entry, I designed the case for the device in Fusion 360.  
 It has space for the PCB and batteries. The only thing I haven't added in yet is space for the antenna which I'll cross that bridge after I get my hands on the PCB.  
 ![Image of the case in Fusion 360](assets/case2.png)  
 ![Image of the case in Fusion 360](assets/case1.png)  
 
-## Entry 6 - 25/06/2026
+## Entry 6 - 25/06/2026 - Estimated time: 30 mins.
 In this entry, I added thru hole pins on the PCB board to allow us to connect and I2C OLED display to the ESP32 to run a display. I've been planning to run a 0.96" OLED display with the device to display basic statistics and info to the user.  
 ![Image of the kicad PCB](https://stardance.hackclub.com/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6ODIxOTMsInB1ciI6ImJsb2JfaWQifX0=--7155bddc9854dc01754730aec51216c24748e2ce/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTYwMCw5MDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzV9fSwicHVyIjoidmFyaWF0aW9uIn19--3bc8a2c9d65e3b087c0c0b37dcfb642bb247bc73/Screenshot_20260626_111027.png)  
 
-## Entry 7 - 26/06/2026
+## Entry 7 - 26/06/2026 - Estimated time: 1 hour.
 In this entry, I added a voltage dividor from the battey JST to allow the ESP32 to measure the voltage of the battery.  
 The reason I needed a voltage dividor is because a lithium battery can have it's voltage range from ~3v-4.2v depending on the remaining charge.  
 If I put 4.2v straight into the GPIO pins of the ESP32, it would overvolt the ESP32 and blow something on it.
@@ -47,7 +47,7 @@ I also swapped around some of the footprints due to part selection issues during
 ![Image of the Voltage divider on the ESP32 in the schematic](assets/esp32img2.png)
 ![Image of the Voltage divider on the ESP32 in the PCB](assets/pcbimg3.png)  
 
-## Entry 8 - 01/07/2026
+## Entry 8 - 01/07/2026 - Confirmed time: 1 hour.
 In this entry, I've started making the firmware that the ESP32 will run.  
 I've setup an ESP-IDF environment and copied over the hello world project.  
 I also started to write the code for the connection to the GPS, I've setup TinyGPSPlus in the project and written a wrapper for it!  
@@ -55,7 +55,7 @@ I also started to write the code for the connection to the GPS, I've setup TinyG
 ![Code img2](assets/codeimg2.png)  
 ![Code img3](assets/codeimg3.png)  
 
-## Entry 9 - 02/07/2026
+## Entry 9 - 02/07/2026 - Confirmed time: 1 hour.
 In this entry, I finished the GPS wrapper and added the configuration to set the time on the ESP32 based from the GPS.  
 The reason I need a wrapper is because TinyGPSPlus is designed for C++, as a result it uses classes which means in my C objects, I can't reference TinyGPSPlus as the compiler won't know what to do with the classes.  
 The solution I found was to have another C++ object sit between it and have the header file be designed for C, doing this the source file can be C++ and it can communicate with TinyGPSPlus and the main C object.  
