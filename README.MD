@@ -14,7 +14,7 @@ Battery management | TP4056 lithium battery charger
 Power management | TPS63060 voltage step down or step up buck converter  
 CP2102 | Serial UART to USB  
 
-(For a full list of hardware visit the ![BOM](bom.csv))
+(For a full list of hardware and pricing visit the ![BOM](bom.csv))
 
 [![View PCB on KiCanvas](https://hack.club/pcb-badge)](https://kicanvas.org/?github=https://github.com/Sheep26/ScholDigi/tree/main/pcb)
 
