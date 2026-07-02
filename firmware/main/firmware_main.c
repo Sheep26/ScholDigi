@@ -42,9 +42,7 @@ void setupTimeDefault() {
 
 void setupTimeGPS() {
     // Set date and time.
-    timeSetup = getDateValid() && getTimeValid();
-
-    if (!timeSetup)
+    if (!getDateValid() || !getTimeValid())
         return;
 
     struct tm tm;
@@ -60,6 +58,8 @@ void setupTimeGPS() {
 
     struct timeval now = { .tv_sec = t, .tv_usec=0 };
     settimeofday(&now, NULL);
+
+    timeSetup = 1;
 }
 
 void app_main(void) {
