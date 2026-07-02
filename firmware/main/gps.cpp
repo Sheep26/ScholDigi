@@ -15,9 +15,8 @@ int readGPS(uint8_t *buffer) {
 
 // Task to read gps data.
 void gps_task(void *pvParameters) {
-    uint8_t *buffer = (uint8_t *) malloc(GPS_BUF_SIZE);
-
     while (1) {
+        uint8_t buffer[GPS_BUF_SIZE];
         int length = readGPS(buffer);
 
         if (length)

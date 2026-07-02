@@ -4,7 +4,6 @@
 #define GPS_BUF_SIZE 1024
 
 #include <inttypes.h>
-#include "esp_system.h"
 
 #ifdef __cplusplus
 extern "C" {
