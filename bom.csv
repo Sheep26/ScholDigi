@@ -1,6 +1,7 @@
 Type,Reference,Value,Footprint,JLCPCB Part #,Qty,Source,Total Price ($)
-PCB,,,,,5,5 JLCPCB, 24.98
-SHIPPING,,,,,1,1 ??,??
+PCB,,,,,5,5 JLCPCB,2
+SHIPPING,,,,,1,1 DHL EXPRESS,21.36
+PCBA,Standard PCBA Price,,,,2,2 JLCPCB, 157.41
 PCBA,"C1,C12,C2,C9",10uF,0603,C19702,30,30 JLCPCB,1.734
 PCBA,C4,10nF,0603,C57112,20,20 JLCPCB,0.36
 PCBA,C7,22uF,0603,C59461,20,20 JLCPCB,0.47
@@ -41,4 +42,6 @@ PCBA,U6,CP2102,QFN50P500X500X100-29N,C192392,5,5 JLCPCB,25.648
 ,TP2,GND,TestPoint_Pad_D2.0mm,,,,
 ,TP3,RX0,TestPoint_Pad_D2.0mm,,,,
 ,TP4,TX0,TestPoint_Pad_D2.0mm,,,,
-,,,,,,,Total Price 179.85
+,,,,,,,Merchandise Total $159.41
+,,,,,,,Shipping Total $21.36
+,,,,,,,Total Price $180.77
