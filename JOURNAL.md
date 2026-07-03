@@ -62,4 +62,6 @@ The reason I need a wrapper is because TinyGPSPlus is designed for C++, as a res
 The solution I found was to have another C++ object sit between it and have the header file be designed for C, doing this the source file can be C++ and it can communicate with TinyGPSPlus and the main C object.  
 ![Code img4](assets/codeimg4.png)  
 ![Code img5](assets/codeimg5.png)  
-![Code img6](assets/codeimg6.png)  
+![Code img6](assets/codeimg6.png)    
+
+I also want to state that in my project resubmission form where I talked about the project going down I tier, I don't want that. If that is the situation please tell me what I need to fix, maybe I need more detail in my journal.
