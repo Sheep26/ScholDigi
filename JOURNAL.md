@@ -64,4 +64,4 @@ The solution I found was to have another C++ object sit between it and have the 
 ![Code img5](assets/codeimg5.png)  
 ![Code img6](assets/codeimg6.png)    
 
-I also want to state that in my project resubmission form where I talked about the project going down I tier, I don't want that (The JLCPCB quote was $180.71). If that is the situation please tell me what I need to fix.
+I also want to state that in my project resubmission form where I talked about me being told that the project may go down a tier if the journal wasn't enough, I don't want that (The JLCPCB quote was $180.71). If that is the situation please tell me what I need to fix.
