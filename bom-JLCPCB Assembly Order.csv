@@ -1,5 +1,3 @@
-
-Est. Total Price 139.7647
 Reference,Value,Footprint,JLCPCB Part #,Qty,Source,Total Price ($)
 "C1,C12,C2,C9",10uF,0603,C19702,30,30 JLCPCB,1.734
 C4,10nF,0603,C57112,20,20 JLCPCB,0.36
@@ -41,3 +39,4 @@ TP1,3V3,TestPoint_Pad_D2.0mm,,,
 TP2,GND,TestPoint_Pad_D2.0mm,,,
 TP3,RX0,TestPoint_Pad_D2.0mm,,,
 TP4,TX0,TestPoint_Pad_D2.0mm,,,
+,,,,,Est. Total Price 139.7647
