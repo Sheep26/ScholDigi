@@ -1,4 +1,3 @@
-For those who will wonder where I found the dates for the Journal entry. I am logging this project in a document for NZQA alongside stardance. This is just a so that I can submit it for the scholarship subject.    
 ## Entry 1 - 18/06/2026 - Time spent in session: 30 mins.
 In this entry, we've designed a battery management and charging system in kicad schematic. It uses a TP4056 battery module and is designed for lithium batteries.  
 We've picked a TP4056 lithium battery because it allows us to charge at upto 1 Amp (I shouldn't need more than that) and it's very simple to setup.
@@ -62,7 +61,4 @@ The reason I need a wrapper is because TinyGPSPlus is designed for C++, as a res
 The solution I found was to have another C++ object sit between it and have the header file be designed for C, doing this the source file can be C++ and it can communicate with TinyGPSPlus and the main C object.  
 ![Code img4](assets/codeimg4.png)  
 ![Code img5](assets/codeimg5.png)  
-![Code img6](assets/codeimg6.png)    
-
-## Extra Statement
-I also want to state that in my project resubmission form where I talked about me being told that the project may go down a tier if the journal wasn't enough, I don't want that (The JLCPCB quote was $180.71). If that is the situation please tell me what I need to fix.
+![Code img6](assets/codeimg6.png)  
