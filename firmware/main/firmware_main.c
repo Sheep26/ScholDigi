@@ -119,6 +119,12 @@ void app_main(void) {
         if (!timeSetup)
             setupTimeGPS();
 
+        // This should return garbage unless lib C converts it to a number on it's own. I'm not used to lib C existing so umm yeah.
+        // It'll return garbage because we are casting an int to a char and when that happens the int turns into it's utf-8 or ascii letter instead of a number.
+        // If there's garbage the solution is to add an offset to an extent that only works upto 10.
+        // I could make an ITOA function at some point in time, but idk if lib C does that on it's own.
+        printf("Satellites: %s", (char*) getSatellites());
+
         // Print time.
         struct tm timeinfo = getTime();
         char strftime_buf[64];

@@ -1,0 +1,1 @@
+C:\Espressif\tools\Microsoft.v6.0.2.PowerShell_profile.ps1
