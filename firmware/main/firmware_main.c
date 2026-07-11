@@ -11,8 +11,10 @@
 #include <gps.h>
 #include <sys/time.h>
 #include <time.h>
+#include <exercise.h>
 
 int timeSetup = 0;
+exercise_t current_exercise;
 
 struct tm getTime() {
     time_t now;
