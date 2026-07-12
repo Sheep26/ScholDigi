@@ -14,7 +14,9 @@
 #include <exercise.h>
 
 int timeSetup = 0;
-exercise_t current_exercise;
+int locationValid = 0;
+
+exercise_t *current_exercise;
 
 struct tm getTime() {
     time_t now;
@@ -65,6 +67,7 @@ void setupTimeGPS() {
 }
 
 void app_main(void) {
+    // Setup
     printf("Hello world!\n");
 
     /* Print chip information */
@@ -133,6 +136,24 @@ void app_main(void) {
 
         strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
         printf("%s", strftime_buf);
+
+        if (current_exercise && current_exercise->list && current_exercise->last) {
+            // Check if things have changed.
+            if (getLat() != current_exercise->last->lat || getLng() != current_exercise->last->lng || getAlititude() != current_exercise->last->alt) {
+                // Create pointer for exercise point struct.
+                exercise_point_t *point = (exercise_point_t*) malloc(sizeof(exercise_point_t));
+
+                // Set variables.
+                point->lat = getLat();
+                point->lng = getLng();
+                point->alt = getAlititude();
+                point->speed = getSpeed();
+                point->time = getTime();
+
+                // Add point.
+                addExercisePoint(current_exercise, point);
+            }
+        }
     }
 
     // Reset ESP32 incase while loop ever exits.

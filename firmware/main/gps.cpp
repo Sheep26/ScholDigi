@@ -33,7 +33,7 @@ double getLng() {
     return gps.location.lng();
 }
 
-double getKMPH() {
+double getSpeed() {
     return gps.speed.kmph();
 }
 

@@ -16,7 +16,7 @@ void gps_task(void *pvParameters);
 double getLat();
 double getLng();
 
-double getKMPH();
+double getSpeed();
 
 double getAlititude();
 

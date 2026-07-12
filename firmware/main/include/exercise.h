@@ -10,6 +10,8 @@
 #ifndef EXERCISE_POINT_H
 #define EXERCISE_POINT_H
 
+#include <time.h>
+
 struct exercise_point;
 
 typedef struct exercise_point {
@@ -33,7 +35,10 @@ typedef struct {
     double end_alt;
     struct tm end_time;
 
-    exercise_point_t *point_list;
+    exercise_point_t *list;
+    exercise_point_t *last;
 } exercise_t;
+
+void addExercisePoint(exercise_t *exercise, exercise_point_t *point);
 
 #endif
