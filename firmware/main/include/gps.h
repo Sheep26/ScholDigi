@@ -10,7 +10,7 @@ extern "C" {
 #endif
 
 // GPS task.
-void gps_task(void *pvParameters);
+void doGPS();
 
 // GPS data.
 double getLat();

@@ -14,15 +14,13 @@ int readGPS(uint8_t *buffer) {
 }
 
 // Task to read gps data.
-void gps_task(void *pvParameters) {
-    while (1) {
-        uint8_t buffer[GPS_BUF_SIZE];
-        int length = readGPS(buffer);
+void doGPS() {
+    uint8_t buffer[GPS_BUF_SIZE];
+    int length = readGPS(buffer);
 
-        if (length)
-            for (int i = 0; i < length; i++)
-                gps.encode(buffer[i]);
-    }
+    if (length)
+        for (int i = 0; i < length; i++)
+            gps.encode(buffer[i]);
 }
 
 double getLat() {

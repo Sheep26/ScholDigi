@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include <pins.h>
+#include <gps.h>
+#include <sys/time.h>
+#include <time.h>
+#include <exercise.h>
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -8,15 +12,33 @@
 #include "esp_flash.h"
 #include "esp_system.h"
 #include "driver/uart.h"
-#include <gps.h>
-#include <sys/time.h>
-#include <time.h>
-#include <exercise.h>
+#include "driver/i2c_master.h"
 
 int timeSetup = 0;
 int locationValid = 0;
 
 exercise_t *current_exercise;
+i2c_master_bus_handle_t i2c_bus_handle;
+i2c_master_dev_handle_t i2c_pcf_handle;
+
+uint8_t pcf_gpio_state = 0x00;
+
+void pcf_digital_write(uint8_t pin, uint8_t value) {
+    // Perform bitshift.
+    // Move bit (value) into pcf_gpio_state at position (pin).
+    pcf_gpio_state |= (value << pin);
+
+    ESP_ERROR_CHECK(i2c_master_transmit(i2c_pcf_handle, &pcf_gpio_state, 1, -1));
+}
+
+int pcf_digital_read(uint8_t pin) {
+    uint8_t state;
+    ESP_ERROR_CHECK(i2c_master_receive(pcf, &state, 1, -1));
+
+    // Perform bitshift.
+    // Get if state at position (pin) is 1.
+    return state & (1 << pin);
+}
 
 struct tm getTime() {
     time_t now;
@@ -91,8 +113,6 @@ void app_main(void) {
     printf("Minimum free heap size: %" PRIu32 " bytes\n", esp_get_minimum_free_heap_size());
 
     // Initalize GPS serial connection.
-
-    // Set params.
     uart_config_t uart_config = {
         .baud_rate = 9600,
         .data_bits = UART_DATA_8_BITS,
@@ -101,17 +121,34 @@ void app_main(void) {
         .flow_ctrl = UART_HW_FLOWCTRL_DISABLE
     };
 
-    // Send params to driver.
-    uart_param_config(UART_NUM_1, &uart_config);
-
-    // Set serial pins.
-    uart_set_pin(UART_NUM_1, TX_GPIO_NUM, RX_GPIO_NUM, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-
     // Enable serial on UART num 1.
-    uart_driver_install(UART_NUM_1, GPS_BUF_SIZE, 0, 0, NULL, 0);
+    ESP_ERROR_CHECK(uart_param_config(UART_NUM_1, &uart_config));
+    ESP_ERROR_CHECK(uart_set_pin(UART_NUM_1, TX_GPIO_NUM, RX_GPIO_NUM, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
+    ESP_ERROR_CHECK(uart_driver_install(UART_NUM_1, GPS_BUF_SIZE, 0, 0, NULL, 0));
+
+    // Setup I2C for Display and GPIO.
+    i2c_master_bus_config_t i2c_bus_config = {
+        .i2c_port = I2C_NUM_0,
+        .sda_io_num = I2C_SDA,
+        .scl_io_num = I2C_SCL,
+        .clk_source = I2C_CLK_SRC_DEFAULT,
+        .glitch_ignore_cnt = 7,
+    };
+
+    // Set I2C master bus.
+    ESP_ERROR_CHECK(i2c_new_master_bus(&i2c_bus_config, &i2c_bus_handle));
+
+    // Setup PCF expansion board.
+    i2c_device_config_t pcf_config = {
+        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+        .device_address = PCF_I2C_ADDR,
+        .scl_speed_hz = 100000,
+    };
+
+    ESP_ERROR_CHECK(i2c_master_bus_add_device(i2c_bus_handle, &pcf_config, &i2c_pcf_handle));
 
     // Start gps task.
-    xTaskCreatePinnedToCore(gps_task, "GPS", 4096, NULL, 5, NULL, 1);
+    // xTaskCreatePinnedToCore(gps_task, "GPS", 4096, NULL, 5, NULL, 1);
 
     // Set timezone.
     setenv("TZ", "NZST-12NZDT,M9.5.0/02:00:00,M4.1.0/03:00:00", 1);
@@ -121,6 +158,8 @@ void app_main(void) {
 
     // Loop
     while (1) {
+        doGPS();
+
         if (!timeSetup)
             setupTimeGPS();
 

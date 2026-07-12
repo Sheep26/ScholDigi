@@ -4,4 +4,12 @@
 #define TX_GPIO_NUM 4
 #define RX_GPIO_NUM 5
 
+#define I2C_SDA 2
+#define I2C_SCL 3
+
+#define PCF_I2C_ADDR 0x20
+
+#define HIGH 0x01
+#define LOW 0x00
+
 #endif
