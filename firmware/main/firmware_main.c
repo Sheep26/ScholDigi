@@ -137,9 +137,9 @@ void app_main(void) {
         strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
         printf("%s", strftime_buf);
 
-        if (current_exercise && current_exercise->list && current_exercise->last) {
-            // Check if things have changed.
-            if (getLat() != current_exercise->last->lat || getLng() != current_exercise->last->lng || getAlititude() != current_exercise->last->alt) {
+        if (current_exercise && getLocationValid()) {
+            // Check if things have changed or if there just hasn't been a point yet.
+            if (!current_exercise->list || !current_exercise->last || getLat() != current_exercise->last->lat || getLng() != current_exercise->last->lng || getAlititude() != current_exercise->last->alt) {
                 // Create pointer for exercise point struct.
                 exercise_point_t *point = (exercise_point_t*) malloc(sizeof(exercise_point_t));
 
