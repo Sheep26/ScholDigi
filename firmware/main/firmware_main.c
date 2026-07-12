@@ -33,7 +33,7 @@ void pcf_digital_write(uint8_t pin, uint8_t value) {
 
 int pcf_digital_read(uint8_t pin) {
     uint8_t state;
-    ESP_ERROR_CHECK(i2c_master_receive(pcf, &state, 1, -1));
+    ESP_ERROR_CHECK(i2c_master_receive(i2c_pcf_handle, &state, 1, -1));
 
     // Perform bitshift.
     // Get if state at position (pin) is 1.
