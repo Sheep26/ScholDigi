@@ -186,8 +186,8 @@ void app_main(void) {
 
         struct tm current_time = getTime();
 
-        //if (mktime(&current_time) - mktime(&lastButtonPress) > 300)
-            //esp_lcd_panel_disp_sleep(display->panel, 1); // Put display to sleep after 5 minutes of no button presses.
+        if (mktime(&current_time) - mktime(&lastButtonPress) > 300)
+            ssd1306_disable_display(ssd1306_handle); // Put display to sleep after 5 minutes of no button presses.
 
         // This should return garbage unless lib C converts it to a number on it's own. I'm not used to lib C existing so umm yeah.
         // It'll return garbage because we are casting an int to a char and when that happens the int turns into it's utf-8 or ascii letter instead of a number.
