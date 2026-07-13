@@ -7,6 +7,7 @@
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_panel_io.h"
 #include "esp_lcd_panel_ssd1306.h"
+#include "driver/i2c_master.h"
 
 typedef struct {
     esp_lcd_panel_handle_t panel;

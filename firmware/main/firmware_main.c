@@ -91,6 +91,7 @@ void setupTimeGPS() {
     struct timeval now = { .tv_sec = t, .tv_usec=0 };
     settimeofday(&now, NULL);
 
+    lastButtonPress = tm;
     timeSetup = 1;
 }
 
@@ -168,15 +169,13 @@ void app_main(void) {
 
     // Loop
     while (1) {
-        struct tm current_time = getTime();
-
-        if (mktime(&current_time) - mktime(&lastButtonPress) > 30)
-            esp_lcd_panel_disp_sleep(display->panel, 1);
-
-        doGPS();
-
         if (!timeSetup)
             setupTimeGPS();
+
+        struct tm current_time = getTime();
+
+        if (mktime(&current_time) - mktime(&lastButtonPress) > 300)
+            esp_lcd_panel_disp_sleep(display->panel, 1); // Put display to sleep after 5 minutes of no button presses.
 
         // This should return garbage unless lib C converts it to a number on it's own. I'm not used to lib C existing so umm yeah.
         // It'll return garbage because we are casting an int to a char and when that happens the int turns into it's utf-8 or ascii letter instead of a number.
@@ -196,6 +195,7 @@ void app_main(void) {
             if (!current_exercise->list || !current_exercise->last || getLat() != current_exercise->last->lat || getLng() != current_exercise->last->lng || getAlititude() != current_exercise->last->alt) {
                 // Create pointer for exercise point struct.
                 exercise_point_t *point = (exercise_point_t*) malloc(sizeof(exercise_point_t));
+                assert(point);
 
                 // Set variables.
                 point->lat = getLat();
@@ -208,6 +208,8 @@ void app_main(void) {
                 addExercisePoint(current_exercise, point);
             }
         }
+
+        doGPS();
     }
 
     // Reset ESP32 incase while loop ever exits.
