@@ -5,7 +5,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include <exercise.h>
-#include <display.h>
+#include <ssd1306.h>
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -22,6 +22,8 @@ struct tm lastButtonPress;
 exercise_t *current_exercise;
 i2c_master_bus_handle_t i2c_bus_handle;
 i2c_master_dev_handle_t i2c_pcf_handle;
+
+ssd1306_handle_t ssd1306_handle;
 
 uint8_t pcf_gpio_state = 0b00000000;
 
@@ -154,7 +156,17 @@ void app_main(void) {
 
     ESP_ERROR_CHECK(i2c_master_bus_add_device(i2c_bus_handle, &pcf_config, &i2c_pcf_handle));
 
-    init_display();
+    ssd1306_config_t ssd1306_config = I2C_SSD1306_128x64_CONFIG_DEFAULT;
+    ssd1306_init(i2c_bus_handle, &ssd1306_config, &ssd1306_handle);
+
+    if (ssd1306_handle == NULL) {
+        printf("SSD1306 handle init failed");
+        assert(ssd1306_handle);
+    }
+
+    ssd1306_clear_display(ssd1306_handle, false);
+    ssd1306_set_contrast(ssd1306_handle, 0xFF);
+    ssd1306_display_text(ssd1306_handle, 0, "Hello World!", false);
 
     // Start gps task.
     // xTaskCreatePinnedToCore(gps_task, "GPS", 4096, NULL, 5, NULL, 1);
@@ -174,8 +186,8 @@ void app_main(void) {
 
         struct tm current_time = getTime();
 
-        if (mktime(&current_time) - mktime(&lastButtonPress) > 300)
-            esp_lcd_panel_disp_sleep(display->panel, 1); // Put display to sleep after 5 minutes of no button presses.
+        //if (mktime(&current_time) - mktime(&lastButtonPress) > 300)
+            //esp_lcd_panel_disp_sleep(display->panel, 1); // Put display to sleep after 5 minutes of no button presses.
 
         // This should return garbage unless lib C converts it to a number on it's own. I'm not used to lib C existing so umm yeah.
         // It'll return garbage because we are casting an int to a char and when that happens the int turns into it's utf-8 or ascii letter instead of a number.
@@ -213,6 +225,7 @@ void app_main(void) {
     }
 
     // Reset ESP32 incase while loop ever exits.
+    ssd1306_delete(ssd1306_handle);
     fflush(stdout);
     esp_restart();
 }
