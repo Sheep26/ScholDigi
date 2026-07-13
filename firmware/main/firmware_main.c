@@ -16,17 +16,22 @@
 
 int timeSetup = 0;
 int locationValid = 0;
+struct tm lastButtonPress;
 
 exercise_t *current_exercise;
 i2c_master_bus_handle_t i2c_bus_handle;
 i2c_master_dev_handle_t i2c_pcf_handle;
 
-uint8_t pcf_gpio_state = 0x00;
+uint8_t pcf_gpio_state = 0b00000000;
 
 void pcf_digital_write(uint8_t pin, uint8_t value) {
     // Perform bitshift.
-    // Move bit (value) into pcf_gpio_state at position (pin).
-    pcf_gpio_state |= (value << pin);
+    // Either set the bit at position (pin) or clear it.
+
+    if (value)
+        pcf_gpio_state |= (1 << pin);
+    else
+        pcf_gpio_state &= ~(1 << pin);
 
     ESP_ERROR_CHECK(i2c_master_transmit(i2c_pcf_handle, &pcf_gpio_state, 1, -1));
 }
@@ -37,7 +42,7 @@ int pcf_digital_read(uint8_t pin) {
 
     // Perform bitshift.
     // Get if state at position (pin) is 1.
-    return state & (1 << pin);
+    return (state >> pin) & 1;
 }
 
 struct tm getTime() {
@@ -156,8 +161,14 @@ void app_main(void) {
 
     setupTimeDefault();
 
+    lastButtonPress = getTime();
+
     // Loop
     while (1) {
+        if (mktime(&getTime()) - mktime(&lastButtonPress) > 30) {
+            // Oled driver to handle display darkening.
+        }
+
         doGPS();
 
         if (!timeSetup)
