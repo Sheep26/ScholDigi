@@ -3,13 +3,13 @@
 #include <pins.h>
 #include "driver/i2c_master.h"
 
-static i2c_master_bus_handle_t i2c_bus_handle;
 display_t *display;
 
 void init_display() {
     display = (display_t*) calloc(1, sizeof(display_t));
     display->framebuffer = (uint8_t*) calloc(1, DISPLAY_WIDTH * DISPLAY_HEIGHT/8);
-    ESP_ERROR_CHECK(i2c_master_get_bus_handle(0, &i2c_bus_handle));
+
+    ESP_ERROR_CHECK(i2c_master_get_bus_handle(0, &display->bus));
 
     esp_lcd_panel_io_i2c_config_t display_config = {
         .dev_addr = SSD1306_I2C_ADDR,
@@ -22,7 +22,7 @@ void init_display() {
         .lcd_param_bits = 8,
     };
 
-    ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c(i2c_bus_handle, &display_config, &display->io));
+    ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c(display->bus, &display_config, &display->io));
 
     esp_lcd_panel_dev_config_t panel_config = {
         .bits_per_pixel = 1,

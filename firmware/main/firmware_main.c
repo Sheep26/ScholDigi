@@ -20,7 +20,7 @@ int locationValid = 0;
 struct tm lastButtonPress;
 
 exercise_t *current_exercise;
-static i2c_master_bus_handle_t i2c_bus_handle;
+i2c_master_bus_handle_t i2c_bus_handle;
 i2c_master_dev_handle_t i2c_pcf_handle;
 
 uint8_t pcf_gpio_state = 0b00000000;
@@ -169,9 +169,9 @@ void app_main(void) {
     // Loop
     while (1) {
         struct tm current_time = getTime();
-        if (mktime(&current_time) - mktime(&lastButtonPress) > 30) {
-            // Oled driver to handle display darkening.
-        }
+
+        if (mktime(&current_time) - mktime(&lastButtonPress) > 30)
+            esp_lcd_panel_disp_sleep(display->panel, 1);
 
         doGPS();
 

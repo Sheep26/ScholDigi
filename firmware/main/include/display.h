@@ -11,11 +11,17 @@
 typedef struct {
     esp_lcd_panel_handle_t panel;
     esp_lcd_panel_io_handle_t io;
+    i2c_master_bus_handle_t bus;
     uint8_t *framebuffer;
 } display_t;
+
+extern display_t *display;
 
 void init_display();
 void fill_screen(uint8_t colour);
 void flush_buffer();
+
+void display_sleep();
+void display_wake();
 
 #endif
