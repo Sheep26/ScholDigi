@@ -193,14 +193,14 @@ void app_main(void) {
         // It'll return garbage because we are casting an int to a char and when that happens the int turns into it's utf-8 or ascii letter instead of a number.
         // If there's garbage the solution is to add an offset to an extent that only works upto 10.
         // I could make an ITOA function at some point in time, but idk if lib C does that on it's own.
-        printf("Satellites: %s", (char*) getSatellites());
+        printf("Satellites: %d\n", getSatellites());
 
         // Print time.
         struct tm timeinfo = getTime();
         char strftime_buf[64];
 
         strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-        printf("%s", strftime_buf);
+        printf("%s\n", strftime_buf);
 
         if (current_exercise && getLocationValid()) {
             // Check if things have changed or if there just hasn't been a point yet.
