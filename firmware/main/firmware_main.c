@@ -203,10 +203,9 @@ void app_main(void) {
         printf("Satellites: %d\n", getSatellites());
 
         // Print time.
-        struct tm timeinfo = getTime();
         char strftime_buf[64];
 
-        strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+        strftime(strftime_buf, sizeof(strftime_buf), "%c", &current_time);
         printf("%s\n", strftime_buf);
 
         if (current_exercise && getLocationValid()) {
