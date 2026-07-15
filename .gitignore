@@ -1,8 +1,8 @@
-~*
-.history
+pcb/~*
 web/node_modules
 web/config.json
 gerbs
 firmware/build
 firmware/managed_components
 .vscode
+pcb/.history
