@@ -59,22 +59,6 @@ struct tm getTime() {
     return timeinfo;
 }
 
-void setupTimeDefault() {
-    struct tm tm;
-    tm.tm_year = 2026 - 1990; // Current year minus EPOCH start date.
-    tm.tm_mon = 6;
-    tm.tm_mday = 30;
-
-    tm.tm_hour = 0;
-    tm.tm_min = 0;
-    tm.tm_sec = 0;
-
-    time_t t = mktime(&tm);
-
-    struct timeval now = { .tv_sec = t, .tv_usec=0 };
-    settimeofday(&now, NULL);
-}
-
 void setupTimeGPS() {
     // Set date and time.
     if (!getDateValid() || !getTimeValid())
@@ -176,7 +160,8 @@ void app_main(void) {
     setenv("TZ", "NZST-12NZDT,M9.5.0/02:00:00,M4.1.0/03:00:00", 1);
     tzset();
 
-    setupTimeDefault();
+    struct timeval now = { .tv_sec = 1782734400 /* Jun 30 2026 in EPOCH */, .tv_usec=0 };
+    settimeofday(&now, NULL);
 
     lastButtonPress = getTime();
 
@@ -200,6 +185,27 @@ void app_main(void) {
             ssd1306_enable_display(ssd1306_handle);
         }
 
+        if (pcf_digital_read(START_PIN)) {
+            if (!current_exercise)
+                current_exercise = (exercise_t*) malloc(sizeof(exercise_t));
+            else {
+                // Handle putting exercise into storage eventually.
+
+                // Free exercise from memory.
+                exercise_point_t *p = current_exercise->list;
+
+                while (p) {
+                    exercise_point_t *next = p->next;
+        
+                    free(p);
+                    p = next;
+                }
+
+                free(current_exercise);
+                current_exercise = (void*) 0; // Set current exercise to null instead of having it reference unallocated memory.
+            }
+        }
+
         printf("Satellites: %d\n", getSatellites());
 
         // Print time.
@@ -208,7 +214,7 @@ void app_main(void) {
         strftime(strftime_buf, sizeof(strftime_buf), "%c", &current_time);
         printf("%s\n", strftime_buf);
 
-        if (current_exercise && getLocationValid()) {
+        if (current_exercise && getLocationValid() && getSatellites()) {
             // Check if things have changed or if there just hasn't been a point yet.
             if (!current_exercise->list || !current_exercise->last || getLat() != current_exercise->last->lat || getLng() != current_exercise->last->lng || getAlititude() != current_exercise->last->alt) {
                 // Create pointer for exercise point struct.

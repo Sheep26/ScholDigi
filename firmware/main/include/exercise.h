@@ -18,23 +18,13 @@ typedef struct exercise_point {
     double lat;
     double lng;
     double alt;
-    long time;
+    time_t time;
     double speed;
 
     struct exercise_point *next;
 } exercise_point_t;
 
 typedef struct {
-    double start_lat;
-    double start_lng;
-    double start_alt;
-    struct tm start_time;
-
-    double end_lat;
-    double end_lng;
-    double end_alt;
-    struct tm end_time;
-
     exercise_point_t *list;
     exercise_point_t *last;
 } exercise_t;
