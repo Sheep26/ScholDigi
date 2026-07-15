@@ -18,7 +18,7 @@ typedef struct exercise_point {
     double lat;
     double lng;
     double alt;
-    struct tm time;
+    long time;
     double speed;
 
     struct exercise_point *next;

@@ -14,7 +14,7 @@ int readGPS(uint8_t *buffer) {
 }
 
 // Task to read gps data.
-void doGPS() {
+void GPSTask(void *params) {
     uint8_t buffer[GPS_BUF_SIZE];
     int length = readGPS(buffer);
 

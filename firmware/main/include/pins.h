@@ -13,6 +13,7 @@
 #define HIGH 0x01
 #define LOW 0x00
 
-#define POWER_PIN 0
+#define WAKE_PIN 0
+#define START_PIN 1
 
 #endif

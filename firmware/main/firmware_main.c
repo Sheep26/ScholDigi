@@ -17,6 +17,7 @@
 
 int timeSetup = 0;
 int locationValid = 0;
+int sleeping = 0;
 struct tm lastButtonPress;
 
 exercise_t *current_exercise;
@@ -169,7 +170,7 @@ void app_main(void) {
     ssd1306_display_text(ssd1306_handle, 0, "Hello World!", false);
 
     // Start gps task.
-    // xTaskCreatePinnedToCore(gps_task, "GPS", 4096, NULL, 5, NULL, 1);
+    xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 1);
 
     // Set timezone.
     setenv("TZ", "NZST-12NZDT,M9.5.0/02:00:00,M4.1.0/03:00:00", 1);
@@ -186,8 +187,18 @@ void app_main(void) {
 
         struct tm current_time = getTime();
 
-        if (mktime(&current_time) - mktime(&lastButtonPress) > 300)
+        if (mktime(&current_time) - mktime(&lastButtonPress) > 300 && !sleeping) {
+            sleeping = 1;
+
             ssd1306_disable_display(ssd1306_handle); // Put display to sleep after 5 minutes of no button presses.
+        }
+        
+        if ((pcf_digital_read(WAKE_PIN) || pcf_digital_read(START_PIN)) && sleeping) {
+            sleeping = 0;
+            lastButtonPress = getTime();
+
+            ssd1306_enable_display(ssd1306_handle);
+        }
 
         printf("Satellites: %d\n", getSatellites());
 
@@ -210,14 +221,12 @@ void app_main(void) {
                 point->lng = getLng();
                 point->alt = getAlititude();
                 point->speed = getSpeed();
-                point->time = getTime();
+                point->time = mktime(&current_time);
 
                 // Add point.
                 addExercisePoint(current_exercise, point);
             }
         }
-
-        doGPS();
     }
 
     // Reset ESP32 incase while loop ever exits.
