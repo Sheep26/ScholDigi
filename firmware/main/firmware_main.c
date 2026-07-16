@@ -233,7 +233,7 @@ void app_main(void) {
 
                 while (pointah) {
                     exercise_point_t *next = p->next;
-        
+
                     free(pointah);
                     pointah = next;
                 }
