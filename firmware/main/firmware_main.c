@@ -192,7 +192,7 @@ void app_main(void) {
             else {
                 // Handle putting exercise into storage eventually.
                 exercise_point_t *p = current_exercise->list;
-                exercise_point_t *l;
+                exercise_point_t *l = (void*) 0;
 
                 int div = 0;
 
@@ -220,7 +220,7 @@ void app_main(void) {
                 current_exercise->avg_alt = current_exercise->avg_alt / div;
                 current_exercise->avg_speed = current_exercise->avg_speed / div;
 
-                printf("Distance: %d", current_exercise->distance);
+                printf("Distance: %f", current_exercise->distance);
 
                 // Free exercise from memory.
                 exercise_point_t *pointah = current_exercise->list;
