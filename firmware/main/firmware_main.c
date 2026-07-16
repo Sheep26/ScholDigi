@@ -178,7 +178,7 @@ void app_main(void) {
 
             ssd1306_disable_display(ssd1306_handle); // Put display to sleep after 5 minutes of no button presses.
         }
-        
+
         if ((!pcf_digital_read(WAKE_PIN) || !pcf_digital_read(START_PIN)) && sleeping) {
             sleeping = 0;
             lastButtonPress = getTime();
