@@ -25,6 +25,14 @@ typedef struct exercise_point {
 } exercise_point_t;
 
 typedef struct {
+    double distance;
+    double avg_speed;
+    double top_speed;
+    double alt_diff;
+    double avg_alt;
+    double min_alt;
+    double max_alt;
+
     exercise_point_t *list;
     exercise_point_t *last;
 } exercise_t;

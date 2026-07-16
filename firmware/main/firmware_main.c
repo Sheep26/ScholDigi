@@ -6,6 +6,7 @@
 #include <time.h>
 #include <exercise.h>
 #include <ssd1306.h>
+#include <haversine.h>
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -178,27 +179,63 @@ void app_main(void) {
             ssd1306_disable_display(ssd1306_handle); // Put display to sleep after 5 minutes of no button presses.
         }
         
-        if ((pcf_digital_read(WAKE_PIN) || pcf_digital_read(START_PIN)) && sleeping) {
+        if ((!pcf_digital_read(WAKE_PIN) || !pcf_digital_read(START_PIN)) && sleeping) {
             sleeping = 0;
             lastButtonPress = getTime();
 
             ssd1306_enable_display(ssd1306_handle);
         }
 
-        if (pcf_digital_read(START_PIN)) {
+        if (!pcf_digital_read(START_PIN)) {
             if (!current_exercise)
-                current_exercise = (exercise_t*) malloc(sizeof(exercise_t));
+                current_exercise = (exercise_t*) calloc(1, sizeof(exercise_t));
             else {
                 // Handle putting exercise into storage eventually.
-
-                // Free exercise from memory.
                 exercise_point_t *p = current_exercise->list;
+                exercise_point_t *l;
+
+                int div = 0;
 
                 while (p) {
+                    // Add exercise distance.
+                    if (l) {
+                        current_exercise->distance += distanceBetweenPoints(l, p);
+
+                        l = (void*) 0;
+                    } else
+                        l = p;
+
+                    if (p->alt > current_exercise->max_alt)
+                        current_exercise->max_alt = p->alt;
+                    
+                    if (p->alt < current_exercise->min_alt || !current_exercise->min_alt)
+                        current_exercise->min_alt = p->alt;
+                    
+                    if (p->speed > current_exercise->top_speed)
+                        current_exercise->top_speed = p->speed;
+                    
+                    current_exercise->avg_alt += p->alt;
+                    current_exercise->avg_speed += p->speed;
+
+                    current_exercise->alt_diff = current_exercise->max_alt - current_exercise->min_alt;
+
+                    div++;                    
+                    p = p->next;
+                }
+
+                current_exercise->avg_alt = current_exercise->avg_alt / div;
+                current_exercise->avg_speed = current_exercise->avg_speed / div;
+
+                printf("Distance: %d", current_exercise->distance);
+
+                // Free exercise from memory.
+                exercise_point_t *pointah = current_exercise->list;
+
+                while (pointah) {
                     exercise_point_t *next = p->next;
         
-                    free(p);
-                    p = next;
+                    free(pointah);
+                    pointah = next;
                 }
 
                 free(current_exercise);
