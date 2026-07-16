@@ -205,19 +205,13 @@ void app_main(void) {
                     } else
                         l = p;
 
-                    if (p->alt > current_exercise->max_alt)
-                        current_exercise->max_alt = p->alt;
-                    
-                    if (p->alt < current_exercise->min_alt || !current_exercise->min_alt)
-                        current_exercise->min_alt = p->alt;
-                    
-                    if (p->speed > current_exercise->top_speed)
-                        current_exercise->top_speed = p->speed;
-                    
-                    current_exercise->avg_alt += p->alt;
-                    current_exercise->avg_speed += p->speed;
+                    current_exercise->max_alt = p->alt > current_exercise->max_alt ? p->alt : current_exercise->max_alt;
+                    current_exercise->min_alt = (p->alt < current_exercise->min_alt || !current_exercise->min_alt) ? p->alt : current_exercise->min_alt;
+                    current_exercise->top_speed = p->speed > current_exercise->top_speed ? p->speed : current_exercise->top_speed;
 
                     current_exercise->alt_diff = current_exercise->max_alt - current_exercise->min_alt;
+                    current_exercise->avg_alt += p->alt;
+                    current_exercise->avg_speed += p->speed;
 
                     div++;                    
                     p = p->next;
