@@ -4,6 +4,10 @@
 /*
 This function houses an implementation for the haversine formula.
 The haversine formula is used to calculate the distance between two points on a globe with respect to their latadue and longatude.
+
+The haversine formula unfortunately assumes the earth is a perfect spheriod though, which unfortulatly the earth is a bit more elliptical than that.
+The other formula we could use to calculate distances between points on a elliptical surface is the inverse of vincenty's formula.
+However that is a lot more complex and a lot slower to compute.
 */
 
 double degToRad(double deg) {
