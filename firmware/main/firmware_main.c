@@ -7,6 +7,7 @@
 #include <exercise.h>
 #include <ssd1306.h>
 #include <haversine.h>
+#include <esp_littlefs.h>
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -107,6 +108,21 @@ void app_main(void) {
     printf("%" PRIu32 "MB %s flash\n", flash_size / (uint32_t)(1024 * 1024), (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
     printf("Minimum free heap size: %" PRIu32 " bytes\n", esp_get_minimum_free_heap_size());
 
+    // Setup littlefs.
+    esp_vfs_littlefs_conf_t fs_conf = {
+        .base_path = "/littlefs",
+        .partition_label = "littlefs",
+        .format_if_mount_failed = 1,
+        .dont_mount = 0
+    };
+
+    ESP_ERROR_CHECK(esp_vfs_littlefs_register(&conf));
+
+    size_t total = 0, used = 0;
+    ESP_ERROR_CHECK(esp_littlefs_info(fs_conf.partition_label, &total, &used));
+
+    printf("Total flash storage: %d, Used flash storage: %d", total, used);
+
     // Initalize GPS serial connection.
     uart_config_t uart_config = {
         .baud_rate = 9600,
@@ -172,8 +188,9 @@ void app_main(void) {
             setupTimeGPS();
 
         struct tm current_time = getTime();
+        time_t time_epoch = mktime(&current_time);
 
-        if (mktime(&current_time) - mktime(&lastButtonPress) > 300 && !sleeping) {
+        if (time_epoch - mktime(&lastButtonPress) > 300 && !sleeping) {
             sleeping = 1;
 
             ssd1306_disable_display(ssd1306_handle); // Put display to sleep after 5 minutes of no button presses.
@@ -220,6 +237,9 @@ void app_main(void) {
                 current_exercise->avg_alt = current_exercise->avg_alt / div;
                 current_exercise->avg_speed = current_exercise->avg_speed / div;
 
+                current_exercise->stop = time_epoch;
+                // We have calculated all our things so we need to store it now.
+
                 printf("Distance: %f", current_exercise->distance);
 
                 // Free exercise from memory.
@@ -253,11 +273,14 @@ void app_main(void) {
                 assert(point);
 
                 // Set variables.
+                if (!current_exercise->start)
+                    current_exercise->start = time_epoch;
+
                 point->lat = getLat();
                 point->lng = getLng();
                 point->alt = getAlititude();
                 point->speed = getSpeed();
-                point->time = mktime(&current_time);
+                point->time = time_epoch;
 
                 // Add point.
                 addExercisePoint(current_exercise, point);
@@ -266,6 +289,7 @@ void app_main(void) {
     }
 
     // Reset ESP32 incase while loop ever exits.
+    esp_vfs_littlefs_unregister(fs_conf.partition_label);
     ssd1306_delete(ssd1306_handle);
     fflush(stdout);
     esp_restart();

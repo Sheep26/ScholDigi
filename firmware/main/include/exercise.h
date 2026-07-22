@@ -32,6 +32,8 @@ typedef struct {
     double avg_alt;
     double min_alt;
     double max_alt;
+    time_t start;
+    time_t stop;
 
     exercise_point_t *list;
     exercise_point_t *last;
