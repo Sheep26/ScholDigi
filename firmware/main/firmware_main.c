@@ -85,9 +85,6 @@ void setupTimeGPS() {
 }
 
 void app_main(void) {
-    // Setup
-    printf("Hello world!\n");
-
     /* Print chip information */
     esp_chip_info_t chip_info;
     uint32_t flash_size;
@@ -111,7 +108,7 @@ void app_main(void) {
     // Setup littlefs.
     esp_vfs_littlefs_conf_t fs_conf = {
         .base_path = "/littlefs",
-        .partition_label = "littlefs",
+        .partition_label = "fs_storage",
         .format_if_mount_failed = 1,
         .dont_mount = 0
     };
