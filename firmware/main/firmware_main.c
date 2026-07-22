@@ -116,7 +116,7 @@ void app_main(void) {
         .dont_mount = 0
     };
 
-    ESP_ERROR_CHECK(esp_vfs_littlefs_register(&conf));
+    ESP_ERROR_CHECK(esp_vfs_littlefs_register(&fs_conf));
 
     size_t total = 0, used = 0;
     ESP_ERROR_CHECK(esp_littlefs_info(fs_conf.partition_label, &total, &used));
