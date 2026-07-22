@@ -7430,6 +7430,12 @@
 		(uuid "1de23f2d-de73-4128-91cd-461ac80caa37")
 	)
 	(junction
+		(at 212.09 113.03)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "2d6ba155-9582-4234-b26f-e138d9dd47e3")
+	)
+	(junction
 		(at 49.53 45.72)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -7560,6 +7566,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "970a7235-ee29-4617-885e-52bc2685fb46")
+	)
+	(junction
+		(at 193.04 113.03)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "9ceb4166-e5db-40b5-8918-a687a08f2756")
 	)
 	(junction
 		(at 45.72 45.72)
@@ -8099,6 +8111,16 @@
 	)
 	(wire
 		(pts
+			(xy 212.09 110.49) (xy 212.09 113.03)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "29bf4838-d403-459d-af2c-2a3cd8318b20")
+	)
+	(wire
+		(pts
 			(xy 105.41 72.39) (xy 106.68 72.39)
 		)
 		(stroke
@@ -8146,6 +8168,16 @@
 			(type default)
 		)
 		(uuid "31638a8b-1531-4dd1-bce3-296ada062c14")
+	)
+	(wire
+		(pts
+			(xy 193.04 109.22) (xy 193.04 113.03)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "31da9945-64df-43a9-ba27-1ab3ce3b4bb2")
 	)
 	(wire
 		(pts
@@ -8809,7 +8841,7 @@
 	)
 	(wire
 		(pts
-			(xy 191.77 113.03) (xy 194.31 113.03)
+			(xy 191.77 113.03) (xy 193.04 113.03)
 		)
 		(stroke
 			(width 0)
@@ -8889,7 +8921,7 @@
 	)
 	(wire
 		(pts
-			(xy 189.23 115.57) (xy 201.93 115.57)
+			(xy 189.23 115.57) (xy 204.47 115.57)
 		)
 		(stroke
 			(width 0)
@@ -9559,6 +9591,16 @@
 	)
 	(wire
 		(pts
+			(xy 193.04 113.03) (xy 194.31 113.03)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cf3d0375-2612-487f-9964-86af677fae9b")
+	)
+	(wire
+		(pts
 			(xy 69.85 153.67) (xy 74.93 153.67)
 		)
 		(stroke
@@ -9576,6 +9618,16 @@
 			(type default)
 		)
 		(uuid "d07d3c74-2dbd-420a-b884-0f908a616931")
+	)
+	(wire
+		(pts
+			(xy 212.09 113.03) (xy 212.09 115.57)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d19e7063-88ef-4ee0-a62a-80210da61189")
 	)
 	(wire
 		(pts
@@ -9859,6 +9911,16 @@
 	)
 	(wire
 		(pts
+			(xy 204.47 109.22) (xy 193.04 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f22a1155-ac1b-463d-a52f-894ebb65b314")
+	)
+	(wire
+		(pts
 			(xy 120.65 173.99) (xy 135.89 173.99)
 		)
 		(stroke
@@ -9936,6 +9998,16 @@
 			(type default)
 		)
 		(uuid "fb3e0ad1-d62e-4c15-b56e-7db2966bfb0d")
+	)
+	(wire
+		(pts
+			(xy 204.47 109.22) (xy 204.47 110.49)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fb688f00-729f-4d1c-b6a7-f8ac0a76096a")
 	)
 	(wire
 		(pts
@@ -15422,6 +15494,85 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R")
+		(at 208.28 110.49 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "6d93f87e-ea4c-4625-a854-2cba2960e47f")
+		(property "Reference" "R23"
+			(at 208.026 108.458 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "4.7K"
+			(at 208.026 110.49 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 208.28 112.268 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 208.28 110.49 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 208.28 110.49 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "26d1abe3-ea46-40cd-a163-e45f9d49ec61")
+		)
+		(pin "1"
+			(uuid "3d49686c-30d9-4a1e-a59c-aea178ace030")
+		)
+		(instances
+			(project "ScholDigi"
+				(path "/799505b5-cafe-42fb-859d-de725ec7ace2"
+					(reference "R23")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C")
 		(at 207.01 158.75 270)
 		(unit 1)
@@ -16439,6 +16590,85 @@
 			(project "ScholDigi"
 				(path "/799505b5-cafe-42fb-859d-de725ec7ace2"
 					(reference "R22")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 208.28 115.57 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "875dd734-4703-47fd-9bde-755422b46ad3")
+		(property "Reference" "R24"
+			(at 208.026 113.538 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "4.7K"
+			(at 208.026 115.57 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 208.28 117.348 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 208.28 115.57 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 208.28 115.57 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "eeecc372-3bc3-45a9-9b3f-8c5463916c06")
+		)
+		(pin "1"
+			(uuid "05b8cd79-6b3d-4cf4-9d35-9ef26088e652")
+		)
+		(instances
+			(project "ScholDigi"
+				(path "/799505b5-cafe-42fb-859d-de725ec7ace2"
+					(reference "R24")
 					(unit 1)
 				)
 			)
@@ -19623,6 +19853,85 @@
 			(project "ScholDigi"
 				(path "/799505b5-cafe-42fb-859d-de725ec7ace2"
 					(reference "R14")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 212.09 113.03 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ef9a4d29-9676-4fd0-a9c0-59f71159a5ba")
+		(property "Reference" "#PWR041"
+			(at 208.28 113.03 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 215.9 113.0299 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 212.09 113.03 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 212.09 113.03 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 212.09 113.03 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "160a3c13-0783-4569-a874-6a242480efb5")
+		)
+		(instances
+			(project "ScholDigi"
+				(path "/799505b5-cafe-42fb-859d-de725ec7ace2"
+					(reference "#PWR041")
 					(unit 1)
 				)
 			)
