@@ -17,6 +17,9 @@
 #include "driver/uart.h"
 #include "driver/i2c_master.h"
 
+#define DEBUG
+#define DISPLAY
+
 int timeSetup = 0;
 int locationValid = 0;
 int sleeping = 0;
@@ -29,6 +32,15 @@ i2c_master_dev_handle_t i2c_pcf_handle;
 ssd1306_handle_t ssd1306_handle;
 
 uint8_t pcf_gpio_state = 0b00000000;
+
+void scan_i2c() {
+    for (uint8_t addr = 0x08; addr < 0x78; addr++) {
+        esp_err_t err = i2c_master_probe(i2c_bus_handle, addr, 100);
+
+        if (err == ESP_OK)
+            printf("Found device at 0x%02X\n", addr);
+    }
+}
 
 void pcf_digital_write(uint8_t pin, uint8_t value) {
     // Perform bitshift.
@@ -147,6 +159,11 @@ void app_main(void) {
     // Set I2C master bus.
     ESP_ERROR_CHECK(i2c_new_master_bus(&i2c_bus_config, &i2c_bus_handle));
 
+    // Debug function.
+#ifdef DEBUG
+    scan_i2c();
+#endif
+
     // Setup PCF expansion board.
     i2c_device_config_t pcf_config = {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
@@ -160,6 +177,7 @@ void app_main(void) {
     esp_err_t err = i2c_master_transmit(i2c_pcf_handle, &init_state, 1, -1);
     printf("transmit: %s\n", esp_err_to_name(err));
 
+#ifdef DISPLAY
     ssd1306_config_t ssd1306_config = I2C_SSD1306_128x64_CONFIG_DEFAULT;
     ssd1306_init(i2c_bus_handle, &ssd1306_config, &ssd1306_handle);
 
@@ -171,6 +189,7 @@ void app_main(void) {
     ssd1306_clear_display(ssd1306_handle, false);
     ssd1306_set_contrast(ssd1306_handle, 0xFF);
     ssd1306_display_text(ssd1306_handle, 0, "Hello World!", false);
+#endif
 
     // Start gps task.
     xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 0);
@@ -192,18 +211,20 @@ void app_main(void) {
         struct tm current_time = getTime();
         time_t time_epoch = mktime(&current_time);
 
+#ifdef DISPLAY
         if (time_epoch - mktime(&lastButtonPress) > 300 && !sleeping) {
             sleeping = 1;
 
-            //ssd1306_disable_display(ssd1306_handle); // Put display to sleep after 5 minutes of no button presses.
+            ssd1306_disable_display(ssd1306_handle); // Put display to sleep after 5 minutes of no button presses.
         }
 
         if ((!pcf_digital_read(WAKE_PIN) || !pcf_digital_read(START_PIN)) && sleeping) {
             sleeping = 0;
             lastButtonPress = getTime();
 
-            //ssd1306_enable_display(ssd1306_handle);
+            ssd1306_enable_display(ssd1306_handle);
         }
+#endif
 
         if (!pcf_digital_read(START_PIN)) {
             if (!current_exercise)
