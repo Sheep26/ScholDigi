@@ -141,6 +141,7 @@ void app_main(void) {
         .scl_io_num = I2C_SCL,
         .clk_source = I2C_CLK_SRC_DEFAULT,
         .glitch_ignore_cnt = 7,
+        .flags.enable_internal_pullup = 1,
     };
 
     // Set I2C master bus.
@@ -159,7 +160,7 @@ void app_main(void) {
     esp_err_t err = i2c_master_transmit(i2c_pcf_handle, &init_state, 1, -1);
     printf("transmit: %s\n", esp_err_to_name(err));
 
-    /*ssd1306_config_t ssd1306_config = I2C_SSD1306_128x64_CONFIG_DEFAULT;
+    ssd1306_config_t ssd1306_config = I2C_SSD1306_128x64_CONFIG_DEFAULT;
     ssd1306_init(i2c_bus_handle, &ssd1306_config, &ssd1306_handle);
 
     if (ssd1306_handle == NULL) {
@@ -169,7 +170,7 @@ void app_main(void) {
 
     ssd1306_clear_display(ssd1306_handle, false);
     ssd1306_set_contrast(ssd1306_handle, 0xFF);
-    ssd1306_display_text(ssd1306_handle, 0, "Hello World!", false);*/
+    ssd1306_display_text(ssd1306_handle, 0, "Hello World!", false);
 
     // Start gps task.
     xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 0);
