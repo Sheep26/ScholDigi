@@ -113,12 +113,12 @@ void app_main(void) {
         .dont_mount = 0
     };
 
-    ESP_ERROR_CHECK(esp_vfs_littlefs_register(&fs_conf));
+    /*ESP_ERROR_CHECK(esp_vfs_littlefs_register(&fs_conf));
 
     size_t total = 0, used = 0;
     ESP_ERROR_CHECK(esp_littlefs_info(fs_conf.partition_label, &total, &used));
 
-    printf("Total flash storage: %d, Used flash storage: %d", total, used);
+    printf("Total flash storage: %d, Used flash storage: %d", total, used);*/
 
     // Initalize GPS serial connection.
     uart_config_t uart_config = {
@@ -155,7 +155,11 @@ void app_main(void) {
 
     ESP_ERROR_CHECK(i2c_master_bus_add_device(i2c_bus_handle, &pcf_config, &i2c_pcf_handle));
 
-    ssd1306_config_t ssd1306_config = I2C_SSD1306_128x64_CONFIG_DEFAULT;
+    uint8_t init_state = 0xFF;
+    esp_err_t err = i2c_master_transmit(i2c_pcf_handle, &init_state, 1, -1);
+    printf("transmit: %s\n", esp_err_to_name(err));
+
+    /*ssd1306_config_t ssd1306_config = I2C_SSD1306_128x64_CONFIG_DEFAULT;
     ssd1306_init(i2c_bus_handle, &ssd1306_config, &ssd1306_handle);
 
     if (ssd1306_handle == NULL) {
@@ -165,10 +169,10 @@ void app_main(void) {
 
     ssd1306_clear_display(ssd1306_handle, false);
     ssd1306_set_contrast(ssd1306_handle, 0xFF);
-    ssd1306_display_text(ssd1306_handle, 0, "Hello World!", false);
+    ssd1306_display_text(ssd1306_handle, 0, "Hello World!", false);*/
 
     // Start gps task.
-    xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 1);
+    xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 0);
 
     // Set timezone.
     setenv("TZ", "NZST-12NZDT,M9.5.0/02:00:00,M4.1.0/03:00:00", 1);
@@ -190,14 +194,14 @@ void app_main(void) {
         if (time_epoch - mktime(&lastButtonPress) > 300 && !sleeping) {
             sleeping = 1;
 
-            ssd1306_disable_display(ssd1306_handle); // Put display to sleep after 5 minutes of no button presses.
+            //ssd1306_disable_display(ssd1306_handle); // Put display to sleep after 5 minutes of no button presses.
         }
 
         if ((!pcf_digital_read(WAKE_PIN) || !pcf_digital_read(START_PIN)) && sleeping) {
             sleeping = 0;
             lastButtonPress = getTime();
 
-            ssd1306_enable_display(ssd1306_handle);
+            //ssd1306_enable_display(ssd1306_handle);
         }
 
         if (!pcf_digital_read(START_PIN)) {
