@@ -16548,7 +16548,7 @@
 		)
 	)
 	(gr_text "Привіт світ"
-		(at 92.5 63.5 90)
+		(at 99 66 90)
 		(layer "B.SilkS")
 		(uuid "fd9c148b-3598-4155-9db9-658b86eec395")
 		(effects
