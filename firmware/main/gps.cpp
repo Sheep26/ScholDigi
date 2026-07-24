@@ -23,7 +23,7 @@ void GPSTask(void *params) {
             for (int i = 0; i < length; i++)
                 gps.encode(buffer[i]);
 
-            printf((char*) buffer);
+            //printf((char*) buffer);
         }
     }
 }

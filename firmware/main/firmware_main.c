@@ -33,15 +33,18 @@ ssd1306_handle_t ssd1306_handle;
 
 uint8_t pcf_gpio_state = 0b00000000;
 
+void check_i2c(uint8_t addr) {
+    esp_err_t err = i2c_master_probe(i2c_bus_handle, addr, 100);
+
+    if (err == ESP_OK)
+        printf("Found device at 0x%02X\n", addr);
+}
+
 void scan_i2c() {
     printf("I2C Scan starting.\n");
 
-    for (uint8_t addr = 0x08; addr < 0x78; addr++) {
-        esp_err_t err = i2c_master_probe(i2c_bus_handle, addr, 100);
-
-        if (err == ESP_OK)
-            printf("Found device at 0x%02X\n", addr);
-    }
+    for (uint8_t addr = 0x08; addr < 0x78; addr++)
+        check_i2c(addr);
 }
 
 void pcf_digital_write(uint8_t pin, uint8_t value) {
@@ -162,7 +165,8 @@ void app_main(void) {
 
     // Debug function.
 #ifdef DEBUG
-    scan_i2c();
+    check_i2c(0x20);
+    check_i2c(0x3c);
 #endif
 
     // Setup PCF expansion board.
@@ -193,8 +197,8 @@ void app_main(void) {
 #endif
 
     // Start gps task.
-    //xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 0);
-    GPSTask(NULL);
+    xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 0);
+    //GPSTask(NULL);
     // Set timezone.
     setenv("TZ", "NZST-12NZDT,M9.5.0/02:00:00,M4.1.0/03:00:00", 1);
     tzset();
@@ -281,13 +285,13 @@ void app_main(void) {
             }
         }
 
-        printf("Satellites: %d\n", getSatellites());
+        //printf("Satellites: %d\n", getSatellites());
 
         // Print time.
         char strftime_buf[64];
 
-        strftime(strftime_buf, sizeof(strftime_buf), "%c", &current_time);
-        printf("%s\n", strftime_buf);
+        //strftime(strftime_buf, sizeof(strftime_buf), "%c", &current_time);
+        //printf("%s\n", strftime_buf);
 
         if (current_exercise && getLocationValid() && getSatellites()) {
             // Check if things have changed or if there just hasn't been a point yet.
