@@ -36,8 +36,13 @@ uint8_t pcf_gpio_state = 0b00000000;
 void check_i2c(uint8_t addr) {
     esp_err_t err = i2c_master_probe(i2c_bus_handle, addr, 100);
 
-    if (err == ESP_OK)
+    if (err == ESP_OK) {
         printf("Found device at 0x%02X\n", addr);
+
+        return;
+    }
+
+    printf("Device not found 0x%02X\n", addr);
 }
 
 void scan_i2c() {
@@ -165,8 +170,8 @@ void app_main(void) {
 
     // Debug function.
 #ifdef DEBUG
-    check_i2c(0x20);
-    check_i2c(0x3c);
+    check_i2c(PCF_I2C_ADDR);
+    check_i2c(0x3C);
 #endif
 
     // Setup PCF expansion board.
@@ -230,8 +235,6 @@ void app_main(void) {
             ssd1306_enable_display(ssd1306_handle);
         }
 #endif
-
-        printf("%d\n", pcf_digital_read(START_PIN));
 
         if (!pcf_digital_read(START_PIN)) {
             if (!current_exercise)
