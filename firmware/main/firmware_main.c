@@ -171,7 +171,7 @@ void app_main(void) {
     // Debug function.
 #ifdef DEBUG
     check_i2c(PCF_I2C_ADDR);
-    check_i2c(0x3C);
+    check_i2c(I2C_SSD1306_DEV_ADDR);
 #endif
 
     // Setup PCF expansion board.

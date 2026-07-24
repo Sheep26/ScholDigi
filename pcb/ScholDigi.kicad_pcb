@@ -5569,8 +5569,8 @@
 				)
 			)
 		)
-		(property "Value" "100uF"
-			(at 0 1.43 0)
+		(property "Value" "100nF"
+			(at 3.5 0.5 0)
 			(layer "F.Fab")
 			(uuid "bcced9f1-e458-4fdf-8ec8-0ca3208923e5")
 			(effects
