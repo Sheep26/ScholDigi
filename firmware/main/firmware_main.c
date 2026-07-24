@@ -166,7 +166,7 @@ void app_main(void) {
 #endif
 
     // Setup PCF expansion board.
-    /*i2c_device_config_t pcf_config = {
+    i2c_device_config_t pcf_config = {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
         .device_address = PCF_I2C_ADDR,
         .scl_speed_hz = 100000,
@@ -190,7 +190,7 @@ void app_main(void) {
     ssd1306_clear_display(ssd1306_handle, false);
     ssd1306_set_contrast(ssd1306_handle, 0xFF);
     ssd1306_display_text(ssd1306_handle, 0, "Hello World!", false);
-#endif*/
+#endif
 
     // Start gps task.
     //xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 0);
