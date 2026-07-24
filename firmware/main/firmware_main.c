@@ -199,7 +199,7 @@ void app_main(void) {
     setenv("TZ", "NZST-12NZDT,M9.5.0/02:00:00,M4.1.0/03:00:00", 1);
     tzset();
 
-    struct timeval now = { .tv_sec = 1782734400 /* Jun 30 2026 in EPOCH */, .tv_usec=0 };
+    struct timeval now = { .tv_sec = 1782734400, .tv_usec=0 };
     settimeofday(&now, NULL);
 
     lastButtonPress = getTime();
