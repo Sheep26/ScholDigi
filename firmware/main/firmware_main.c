@@ -34,6 +34,8 @@ ssd1306_handle_t ssd1306_handle;
 uint8_t pcf_gpio_state = 0b00000000;
 
 void scan_i2c() {
+    printf("I2C Scan starting.\n");
+
     for (uint8_t addr = 0x08; addr < 0x78; addr++) {
         esp_err_t err = i2c_master_probe(i2c_bus_handle, addr, 100);
 
@@ -153,7 +155,6 @@ void app_main(void) {
         .scl_io_num = I2C_SCL,
         .clk_source = I2C_CLK_SRC_DEFAULT,
         .glitch_ignore_cnt = 7,
-        .flags.enable_internal_pullup = 1,
     };
 
     // Set I2C master bus.
