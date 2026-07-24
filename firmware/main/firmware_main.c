@@ -231,6 +231,8 @@ void app_main(void) {
         }
 #endif
 
+        printf("%d\n", pcf_digital_read(START_PIN));
+
         if (!pcf_digital_read(START_PIN)) {
             if (!current_exercise)
                 current_exercise = (exercise_t*) calloc(1, sizeof(exercise_t));
