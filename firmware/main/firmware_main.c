@@ -288,6 +288,8 @@ void app_main(void) {
                 free(current_exercise);
                 current_exercise = (void*) 0; // Set current exercise to null instead of having it reference unallocated memory.
             }
+
+            vTaskDelay(pdMS_TO_TICKS(10));
         }
 
         //printf("Satellites: %d\n", getSatellites());

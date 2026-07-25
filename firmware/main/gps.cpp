@@ -23,8 +23,7 @@ void GPSTask(void *params) {
             for (int i = 0; i < length; i++)
                 gps.encode(buffer[i]);
 
-            printf((char*)buffer);
-            //printf("Lat: %f, Lng: %f, Satellites: %d\n", getLat(), getLng(), getSatellites());
+            printf("Lat: %f, Lng: %f, Satellites: %d\n", getLat(), getLng(), getSatellites());
         }
     }
 }
