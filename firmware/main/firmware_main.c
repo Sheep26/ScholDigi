@@ -8,6 +8,7 @@
 #include <ssd1306.h>
 #include <haversine.h>
 #include <esp_littlefs.h>
+#include <config.h>
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -16,10 +17,6 @@
 #include "esp_system.h"
 #include "driver/uart.h"
 #include "driver/i2c_master.h"
-
-#define DEBUG
-// #define DISPLAY
-#define PCF
 
 int timeSetup = 0;
 int locationValid = 0;
