@@ -7,24 +7,21 @@
 
 TinyGPSPlus gps;
 
-// This function reads the serial data from the GPS and parses it.
-// Returns the length of the data.
-int readGPS(uint8_t *buffer) {
-    return uart_read_bytes(UART_NUM_1, buffer, GPS_BUF_SIZE, 100 / portTICK_PERIOD_MS);
-}
-
 // Task to read gps data.
 void GPSTask(void *params) {
     while (1) {
-        uint8_t buffer[GPS_BUF_SIZE];
-        int length = readGPS(buffer);
+        uint8_t *buffer = (uint8_t*) malloc(GPS_BUF_SIZE);
+        int length = uart_read_bytes(UART_NUM_1, buffer, GPS_BUF_SIZE, 100 / portTICK_PERIOD_MS);
 
         if (length) {
             for (int i = 0; i < length; i++)
                 gps.encode(buffer[i]);
 
-            printf("Lat: %f, Lng: %f, Satellites: %d\n", getLat(), getLng(), getSatellites());
+            fwrite(buffer, 1, length, stdout);
+            //printf("Lat: %f, Lng: %f, Satellites: %d\n", getLat(), getLng(), getSatellites());
         }
+
+        free(buffer);
     }
 }
 
