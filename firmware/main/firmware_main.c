@@ -18,7 +18,8 @@
 #include "driver/i2c_master.h"
 
 #define DEBUG
-//#define DISPLAY
+// #define DISPLAY
+#define PCF
 
 int timeSetup = 0;
 int locationValid = 0;
@@ -71,6 +72,23 @@ int pcf_digital_read(uint8_t pin) {
     // Perform bitshift.
     // Get if state at position (pin) is 1.
     return (state >> pin) & 1;
+}
+
+void digital_write(uint8_t pin, uint8_t value) {
+#ifdef PCF
+    pcf_digital_write(pin, value);
+#else
+    // TODO
+#endif
+}
+
+int digital_read(uint8_t pin) {
+#ifdef PCF
+    return pcf_digital_read(pin);
+#else
+    // TODO
+    return 0;
+#endif
 }
 
 struct tm getTime() {
@@ -174,6 +192,7 @@ void app_main(void) {
     check_i2c(I2C_SSD1306_DEV_ADDR);
 #endif
 
+#ifdef PCF
     // Setup PCF expansion board.
     i2c_device_config_t pcf_config = {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
@@ -186,6 +205,7 @@ void app_main(void) {
     uint8_t init_state = 0xFF;
     esp_err_t err = i2c_master_transmit(i2c_pcf_handle, &init_state, 1, -1);
     printf("transmit: %s\n", esp_err_to_name(err));
+#endif
 
 #ifdef DISPLAY
     ssd1306_config_t ssd1306_config = I2C_SSD1306_128x64_CONFIG_DEFAULT;
@@ -228,7 +248,7 @@ void app_main(void) {
             ssd1306_disable_display(ssd1306_handle); // Put display to sleep after 5 minutes of no button presses.
         }
 
-        if ((!pcf_digital_read(WAKE_PIN) || !pcf_digital_read(START_PIN)) && sleeping) {
+        if ((!digital_read(WAKE_PIN) || !digital_read(START_PIN)) && sleeping) {
             sleeping = 0;
             lastButtonPress = getTime();
 
@@ -236,7 +256,7 @@ void app_main(void) {
         }
 #endif
 
-        if (!pcf_digital_read(START_PIN)) {
+        if (!digital_read(START_PIN)) {
             if (!current_exercise)
                 current_exercise = (exercise_t*) calloc(1, sizeof(exercise_t));
             else {
