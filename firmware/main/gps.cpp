@@ -17,8 +17,8 @@ void GPSTask(void *params) {
             for (int i = 0; i < length; i++)
                 gps.encode(buffer[i]);
 
-            fwrite(buffer, 1, length, stdout);
-            //printf("Lat: %f, Lng: %f, Satellites: %d\n", getLat(), getLng(), getSatellites());
+            //fwrite(buffer, 1, length, stdout);
+            printf("Lat: %f, Lng: %f, Satellites: %d\n", getLat(), getLng(), getSatellites());
         }
 
         free(buffer);
