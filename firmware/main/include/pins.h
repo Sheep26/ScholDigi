@@ -17,9 +17,11 @@
 #ifdef PCF
 #define WAKE_PIN 0
 #define START_PIN 1
+#define DEBUG_PIN 2
 #else
 #define WAKE_PIN 0
 #define START_PIN 1
+#define DEBUG_PIN 2
 #endif
 
 #endif

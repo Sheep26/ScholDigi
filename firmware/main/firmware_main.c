@@ -9,6 +9,7 @@
 #include <haversine.h>
 #include <esp_littlefs.h>
 #include <config.h>
+#include <gpio.h>
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -25,11 +26,8 @@ struct tm lastButtonPress;
 
 exercise_t *current_exercise;
 i2c_master_bus_handle_t i2c_bus_handle;
-i2c_master_dev_handle_t i2c_pcf_handle;
 
 ssd1306_handle_t ssd1306_handle;
-
-uint8_t pcf_gpio_state = 0b00000000;
 
 void check_i2c(uint8_t addr) {
     esp_err_t err = i2c_master_probe(i2c_bus_handle, addr, 100);
@@ -48,44 +46,6 @@ void scan_i2c() {
 
     for (uint8_t addr = 0x08; addr < 0x78; addr++)
         check_i2c(addr);
-}
-
-void pcf_digital_write(uint8_t pin, uint8_t value) {
-    // Perform bitshift.
-    // Either set the bit at position (pin) or clear it.
-
-    if (value)
-        pcf_gpio_state |= (1 << pin);
-    else
-        pcf_gpio_state &= ~(1 << pin);
-
-    ESP_ERROR_CHECK(i2c_master_transmit(i2c_pcf_handle, &pcf_gpio_state, 1, -1));
-}
-
-int pcf_digital_read(uint8_t pin) {
-    uint8_t state;
-    ESP_ERROR_CHECK(i2c_master_receive(i2c_pcf_handle, &state, 1, -1));
-
-    // Perform bitshift.
-    // Get if state at position (pin) is 1.
-    return (state >> pin) & 1;
-}
-
-void digital_write(uint8_t pin, uint8_t value) {
-#ifdef PCF
-    pcf_digital_write(pin, value);
-#else
-    // TODO
-#endif
-}
-
-int digital_read(uint8_t pin) {
-#ifdef PCF
-    return pcf_digital_read(pin);
-#else
-    // TODO
-    return 0;
-#endif
 }
 
 struct tm getTime() {
@@ -189,20 +149,7 @@ void app_main(void) {
     check_i2c(I2C_SSD1306_DEV_ADDR);
 #endif
 
-#ifdef PCF
-    // Setup PCF expansion board.
-    i2c_device_config_t pcf_config = {
-        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-        .device_address = PCF_I2C_ADDR,
-        .scl_speed_hz = 100000,
-    };
-
-    ESP_ERROR_CHECK(i2c_master_bus_add_device(i2c_bus_handle, &pcf_config, &i2c_pcf_handle));
-
-    uint8_t init_state = 0xFF;
-    esp_err_t err = i2c_master_transmit(i2c_pcf_handle, &init_state, 1, -1);
-    printf("transmit: %s\n", esp_err_to_name(err));
-#endif
+    setup_gpio();
 
 #ifdef DISPLAY
     ssd1306_config_t ssd1306_config = I2C_SSD1306_128x64_CONFIG_DEFAULT;

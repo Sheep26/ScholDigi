@@ -2,6 +2,7 @@
 
 #include <gps.h>
 #include <TinyGPSPlus.h>
+#include <gpio.h>
 #include "esp_system.h"
 #include "driver/uart.h"
 
@@ -10,18 +11,18 @@ TinyGPSPlus gps;
 // Task to read gps data.
 void GPSTask(void *params) {
     while (1) {
-        uint8_t *buffer = (uint8_t*) malloc(GPS_BUF_SIZE);
+        uint8_t buffer[GPS_BUF_SIZE];
         int length = uart_read_bytes(UART_NUM_1, buffer, GPS_BUF_SIZE, 100 / portTICK_PERIOD_MS);
 
         if (length) {
             for (int i = 0; i < length; i++)
                 gps.encode(buffer[i]);
 
-            //fwrite(buffer, 1, length, stdout);
-            printf("Lat: %f, Lng: %f, Satellites: %d\n", getLat(), getLng(), getSatellites());
+            if (!digital_read(3))
+                fwrite(buffer, 1, length, stdout);
+            else
+                printf("Lat: %f, Lng: %f, Satellites: %d\n", getLat(), getLng(), getSatellites());
         }
-
-        free(buffer);
     }
 }
 
