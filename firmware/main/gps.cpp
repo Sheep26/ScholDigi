@@ -3,6 +3,7 @@
 #include <gps.h>
 #include <TinyGPSPlus.h>
 #include <gpio.h>
+#include <pins.h>
 #include "esp_system.h"
 #include "driver/uart.h"
 
@@ -16,9 +17,9 @@ void GPSTask(void *params) {
 
         if (length) {
             for (int i = 0; i < length; i++)
-                gps.encode(buffer[i]);
+                gps.encode((char) buffer[i]);
 
-            if (!digital_read(3))
+            if (!digital_read(DEBUG_PIN))
                 fwrite(buffer, 1, length, stdout);
             else
                 printf("Lat: %f, Lng: %f, Satellites: %d\n", getLat(), getLng(), getSatellites());

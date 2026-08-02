@@ -2,7 +2,7 @@
 #define CONFIG
 
 #define DEBUG
-// #define DISPLAY
+#define DISPLAY
 #define PCF
 
 #endif
