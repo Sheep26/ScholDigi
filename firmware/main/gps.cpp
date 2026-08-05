@@ -21,8 +21,6 @@ void GPSTask(void *params) {
 
             if (!digital_read(DEBUG_PIN))
                 fwrite(buffer, 1, length, stdout);
-            else
-                printf("Lat: %f, Lng: %f, Satellites: %d\n", getLat(), getLng(), getSatellites());
         }
     }
 }

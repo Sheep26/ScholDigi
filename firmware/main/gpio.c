@@ -29,6 +29,7 @@ void setup_gpio() {
 #endif
 }
 
+#ifdef PCF
 void pcf_digital_write(uint8_t pin, uint8_t value) {
     // Perform bitshift.
     // Either set the bit at position (pin) or clear it.
@@ -49,6 +50,7 @@ int pcf_digital_read(uint8_t pin) {
     // Get if state at position (pin) is 1.
     return (state >> pin) & 1;
 }
+#endif
 
 void digital_write(uint8_t pin, uint8_t value) {
 #ifdef PCF

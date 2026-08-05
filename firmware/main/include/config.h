@@ -3,6 +3,6 @@
 
 #define DEBUG
 #define DISPLAY
-#define PCF
+// #define PCF
 
 #endif
