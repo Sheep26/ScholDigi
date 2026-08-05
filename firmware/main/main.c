@@ -162,7 +162,6 @@ void app_main(void) {
 
     ssd1306_clear_display(ssd1306_handle, false);
     ssd1306_set_contrast(ssd1306_handle, 0xFF);
-    ssd1306_display_text(ssd1306_handle, 0, "Hello World!", false);
 #endif
 
     // Start gps task.
@@ -263,6 +262,13 @@ void app_main(void) {
 
         //strftime(strftime_buf, sizeof(strftime_buf), "%c", &current_time);
         //printf("%s\n", strftime_buf);
+
+
+        char buffy[64];
+        snprintf(buffy, sizeof(buffy), "Lat: %f\nLng: %f", getLat(), getLng());
+
+        ssd1306_clear_display(ssd1306_handle);
+        ssd1306_display_text(ssd1306_handle, 0, buffy, false);
 
         if (current_exercise && getLocationValid() && getSatellites()) {
             // Check if things have changed or if there just hasn't been a point yet.
