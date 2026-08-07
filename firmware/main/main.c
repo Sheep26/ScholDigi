@@ -267,8 +267,10 @@ void app_main(void) {
         char buffy[64];
         snprintf(buffy, sizeof(buffy), "Lat: %f\nLng: %f", getLat(), getLng());
 
+#ifdef DISPLAY
         ssd1306_clear_display(ssd1306_handle);
         ssd1306_display_text(ssd1306_handle, 0, buffy, false);
+#endif
 
         if (current_exercise && getLocationValid() && getSatellites()) {
             // Check if things have changed or if there just hasn't been a point yet.
