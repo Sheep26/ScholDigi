@@ -1,3 +1,8 @@
+# Why am I requesting funding again.
+I am requesting funding again so I would be able to get a second revision of my board printed. I will mostly not be using PCBA so it'll be cheaper.  
+The reason I need a second revision is because of my mistakes/errors, I left a few things out on the board (and also had a short which killed the GPS module).  
+So I am requesting the funding for a new GPS module and to get a new board printed with space for more resistors, capacitors and more which I will solder myself.
+
 # Scholarship Digitech.
 This is my NZQA scholarship technology project.  
 It is a small device which can fit in your pocket or bag, and will track your tramping, hiking, walking, running, cycling, skiing, etc.  
