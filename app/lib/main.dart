@@ -1,48 +1,14 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const ScholDigi());
-}
+import './MainPage.dart';
 
-class ScholDigi extends StatelessWidget {
-  const ScholDigi({super.key});
+void main() => runApp(App());
 
-  // This widget is the root of your application.
+class App extends StatelessWidget {
+  const App({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'ScholDigi',
-      theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Hello World"),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: .center,
-          children: [
-            const Text('Hello World!!!'),
-          ],
-        ),
-      ),
-    );
+    return MaterialApp(home: MainPage());
   }
 }
