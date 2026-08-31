@@ -92,11 +92,6 @@ class _ChatPage extends State<ChatPage> {
             : MainAxisAlignment.start,
         children: <Widget>[
           Container(
-            child: Text(
-                (text) {
-                  return text == '/shrug' ? '¯\\_(ツ)_/¯' : text;
-                }(message.text.trim()),
-                style: TextStyle(color: Colors.white)),
             padding: EdgeInsets.all(12.0),
             margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
             width: 222.0,
@@ -104,6 +99,11 @@ class _ChatPage extends State<ChatPage> {
                 color:
                     message.whom == clientID ? Colors.blueAccent : Colors.grey,
                 borderRadius: BorderRadius.circular(7.0)),
+            child: Text(
+                (text) {
+                  return text == '/shrug' ? '¯\\_(ツ)_/¯' : text;
+                }(message.text.trim()),
+                style: TextStyle(color: Colors.white)),
           ),
         ],
       );
