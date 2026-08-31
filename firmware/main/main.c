@@ -149,7 +149,7 @@ void app_main(void) {
     check_i2c(I2C_SSD1306_DEV_ADDR);
 #endif
 
-    setup_gpio();
+    //setup_gpio();
 
 #ifdef DISPLAY
     ssd1306_config_t ssd1306_config = I2C_SSD1306_128x64_CONFIG_DEFAULT;
@@ -165,8 +165,8 @@ void app_main(void) {
 #endif
 
     // Start gps task.
-    xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 0);
-    //GPSTask(NULL);
+    //xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 0);
+    GPSTask(NULL);
     // Set timezone.
     setenv("TZ", "NZST-12NZDT,M9.5.0/02:00:00,M4.1.0/03:00:00", 1);
     tzset();
