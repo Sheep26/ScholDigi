@@ -8,6 +8,8 @@ import './ChatPage.dart';
 import './DiscoveryPage.dart';
 import './SelectBondedDevicePage.dart';
 
+import 'package:hive/hive.dart';
+
 // import './helpers/LineChart.dart';
 
 class MainPage extends StatefulWidget {
@@ -31,6 +33,8 @@ class _MainPage extends State<MainPage> {
   bool _autoAcceptPairingRequests = false;
 
   int _selectedIndex = 0;
+
+  final box = Hive.box();
 
   @override
   void initState() {
@@ -270,19 +274,17 @@ class _MainPage extends State<MainPage> {
           ),
         ],
       ),
-      const Padding(
-        padding: .all(8.0),
-        child: Column(
-          children: <Widget>[
-            Card(
+      Padding(
+        padding: const .all(8.0),
+        child:
+          ListView.builder(itemCount: box.keys.length, itemBuilder: (context, index) {
+            return Card(
               child: ListTile(
                 leading: Icon(Icons.nordic_walking),
-                title: Text('e'),
-                subtitle: Text('e'),
-              ),
-            ),
-          ],
-        ),
+                title: Text("Tramp ${box.keys.length - index}"),
+                subtitle: Text(box.get(box.keys[box.keys.length - index - 1])),
+              ));
+            })
       ),][_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
