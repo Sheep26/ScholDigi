@@ -30,6 +30,8 @@ class _MainPage extends State<MainPage> {
 
   bool _autoAcceptPairingRequests = false;
 
+  int _selectedIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -85,21 +87,25 @@ class _MainPage extends State<MainPage> {
     super.dispose();
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Uhhhh ermmm'),
       ),
-      body: ListView(
+      body: <Widget>[ListView(
         children: <Widget>[
           SwitchListTile(
             title: const Text('Enable Bluetooth'),
             value: _bluetoothState.isEnabled,
             onChanged: (bool value) {
-              // Do the request and update with the true value then
               future() async {
-                // async lambda seems to not working
                 if (value) {
                   await FlutterBluetoothSerial.instance.requestEnable();
                 } else {
@@ -205,7 +211,7 @@ class _MainPage extends State<MainPage> {
                   return Future.value(null);
                 });
               } else {
-                FlutterBluetoothSerial.instance.setPairingRequestHandler(null);
+                FlutterBluetoothSerial.instance.setPairingRequestHandler(null); //mibah was here :3
               }
             },
           ),
@@ -263,6 +269,29 @@ class _MainPage extends State<MainPage> {
             ),
           ),
         ],
+      ),
+      const Padding(
+        padding: .all(8.0),
+        child: Column(
+          children: <Widget>[
+            Card(
+              child: ListTile(
+                leading: Icon(Icons.nordic_walking),
+                title: Text('e'),
+                subtitle: Text('e'),
+              ),
+            ),
+          ],
+        ),
+      ),][_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.bluetooth), label: 'Bluetooth'),
+          BottomNavigationBarItem(icon: Icon(Icons.nordic_walking), label: 'Tramps'),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
       ),
     );
   }
