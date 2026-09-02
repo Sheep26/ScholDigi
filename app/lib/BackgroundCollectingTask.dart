@@ -1,10 +1,16 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:hive/hive.dart';
 
-class DataSample {
+class ExercisePoint {
+
+}
+
+class Exercise {
   double distance;
   double avgSpeed;
   double topSpeed;
@@ -15,7 +21,9 @@ class DataSample {
   int start;
   int stop;
 
-  DataSample({
+  List<ExercisePoint> points = List<ExercisePoint>.empty(growable: true);
+
+  Exercise({
     required this.distance,
     required this.avgSpeed,
     required this.topSpeed,
@@ -24,8 +32,13 @@ class DataSample {
     required this.minAlt,
     required this.maxAlt,
     required this.start,
-    required this.stop,
+    required this.stop
   });
+}
+
+enum STATUS {
+  idle,
+  collecting
 }
 
 class BackgroundCollectingTask extends Model {
@@ -41,13 +54,15 @@ class BackgroundCollectingTask extends Model {
   final BluetoothConnection _connection;
   List<int> _buffer = List<int>.empty(growable: true);
 
-  // @TODO , Such sample collection in real code should be delegated
-  // (via `Stream<DataSample>` preferably) and then saved for later
-  // displaying on chart (or even stright prepare for displaying).
-  // @TODO ? should be shrinked at some point, endless colleting data would cause memory shortage.
-  List<DataSample> samples = List<DataSample>.empty(growable: true);
-
   bool inProgress = false;
+
+  final box = Hive.box();
+
+  int expectedSize = 0;
+  int expectedPointSize = 0;
+
+  Exercise? lastExercise;
+  STATUS status = STATUS.idle;
 
   BackgroundCollectingTask._fromConnection(this._connection) {
     _connection.input!.listen((data) {
@@ -56,19 +71,22 @@ class BackgroundCollectingTask extends Model {
       while (true) {
         // If there is a sample, and it is full sent
         int index = _buffer.indexOf('t'.codeUnitAt(0));
-        if (index >= 0 && _buffer.length - index >= 7) {
-          /*final DataSample sample = DataSample(
-              temperature1: (_buffer[index + 1] + _buffer[index + 2] / 100),
-              temperature2: (_buffer[index + 3] + _buffer[index + 4] / 100),
-              waterpHlevel: (_buffer[index + 5] + _buffer[index + 6] / 100),
-              timestamp: DateTime.now());
-          _buffer.removeRange(0, index + 7);
 
-          samples.add(sample);*/
+        if (index >= 0 && _buffer.length - index >= expectedSize && status == STATUS.idle) {
+          final Exercise sample = Exercise(distance: 0, avgSpeed: 0, topSpeed: 0, avgAlt: 0, minAlt: 0, maxAlt: 0, altDiff: 0, start: 0, stop: 0);
+          _buffer.removeRange(0, index + expectedSize);
+          lastExercise = sample;
+
+          status = STATUS.collecting;
+          box.put('$box.keys.length', sample);
           notifyListeners();
-        }
+        } else if (index >= 0 && _buffer.length - index >= expectedPointSize && status == STATUS.collecting) {
+          final ExercisePoint sample = ExercisePoint();
 
-        else {
+          lastExercise?.points.add(sample);
+          _buffer.removeRange(0, index + expectedPointSize);
+        } else {
+          status = STATUS.idle;
           break;
         }
       }
@@ -92,7 +110,7 @@ class BackgroundCollectingTask extends Model {
   Future<void> start() async {
     inProgress = true;
     _buffer.clear();
-    samples.clear();
+    lastExercise = null;
     notifyListeners();
     _connection.output.add(ascii.encode('start'));
     await _connection.output.allSent;
@@ -101,6 +119,7 @@ class BackgroundCollectingTask extends Model {
   Future<void> cancel() async {
     inProgress = false;
     notifyListeners();
+    lastExercise = null;
     _connection.output.add(ascii.encode('stop'));
     await _connection.finish();
   }
@@ -117,17 +136,5 @@ class BackgroundCollectingTask extends Model {
     notifyListeners();
     _connection.output.add(ascii.encode('start'));
     await _connection.output.allSent;
-  }
-
-  Iterable<DataSample> getLastOf(int duration) {
-    int startingTime = DateTime.now().millisecondsSinceEpoch - duration;
-    int i = samples.length;
-    do {
-      i -= 1;
-      if (i <= 0) {
-        break;
-      }
-    } while (samples[i].start > startingTime);
-    return samples.getRange(i, samples.length);
   }
 }
