@@ -42,6 +42,7 @@ dependencies:
 
   flutter_bluetooth_serial:
     path: third_party/flutter_bluetooth_serial
+  #flutter_classic_bluetooth: ^1.1.0
 
 dev_dependencies:
   flutter_test:

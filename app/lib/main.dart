@@ -9,7 +9,7 @@ void main() async {
   final dir = await getApplicationDocumentsDirectory();
   Hive.defaultDirectory = dir.path;
 
-  Hive.box().put('Key', 'Data');
+  // Hive.box().put('Key', 'Data');
 
   runApp(App());
 }
