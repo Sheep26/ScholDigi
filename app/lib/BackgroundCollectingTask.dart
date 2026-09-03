@@ -77,7 +77,7 @@ class BackgroundCollectingTask extends Model {
           lastExercise = sample;
 
           status = STATUS.collecting;
-          box.put('$box.keys.length', sample);
+          box.put(box.keys.length.toString(), sample);
           notifyListeners();
         } else if (index >= 0 && _buffer.length - index >= expectedPointSize && status == STATUS.collecting) {
           final ExercisePoint sample = ExercisePoint();
