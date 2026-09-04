@@ -6,7 +6,19 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:hive/hive.dart';
 
 class ExercisePoint {
+  double lat;
+  double lng;
+  double alt;
+  int time;
+  double speed;
 
+  ExercisePoint({
+    required this.lat,
+    required this.lng,
+    required this.alt,
+    required this.time,
+    required this.speed
+  });
 }
 
 class Exercise {
@@ -57,10 +69,10 @@ class BackgroundCollectingTask extends Model {
 
   final box = Hive.box();
 
-  int expectedSize = 0;
-  int expectedPointSize = 0;
+  int expectedSize = 72;
+  int expectedPointSize = 40;
 
-  Exercise? lastExercise;
+  Exercise? currExercise;
   STATUS status = STATUS.idle;
 
   BackgroundCollectingTask._fromConnection(this._connection) {
@@ -74,18 +86,18 @@ class BackgroundCollectingTask extends Model {
         if (index >= 0 && _buffer.length - index >= expectedSize && status == STATUS.idle) {
           final Exercise sample = Exercise(distance: 0, avgSpeed: 0, topSpeed: 0, avgAlt: 0, minAlt: 0, maxAlt: 0, altDiff: 0, start: 0, stop: 0);
           _buffer.removeRange(0, index + expectedSize);
-          lastExercise = sample;
+          currExercise = sample;
 
           status = STATUS.collecting;
-          box.put(box.keys.length.toString(), sample);
           notifyListeners();
         } else if (index >= 0 && _buffer.length - index >= expectedPointSize && status == STATUS.collecting) {
-          final ExercisePoint sample = ExercisePoint();
+          final ExercisePoint sample = ExercisePoint(lat: 0, lng: 0, alt: 0, time: 0, speed: 0);
 
-          lastExercise?.points.add(sample);
+          currExercise?.points.add(sample);
           _buffer.removeRange(0, index + expectedPointSize);
         } else {
           status = STATUS.idle;
+          box.put(box.keys.length.toString(), currExercise);
           break;
         }
       }

@@ -109,17 +109,11 @@ class _MainPage extends State<MainPage> {
             title: const Text('Enable Bluetooth'),
             value: _bluetoothState.isEnabled,
             onChanged: (bool value) {
-              future() async {
-                if (value) {
-                  await FlutterBluetoothSerial.instance.requestEnable();
-                } else {
-                  await FlutterBluetoothSerial.instance.requestDisable();
-                }
+              if (value) {
+                FlutterBluetoothSerial.instance.requestEnable().then((_) => {setState(() {})});
+              } else {
+                FlutterBluetoothSerial.instance.requestDisable().then((_) => {setState(() {})});
               }
-
-              future().then((_) {
-                setState(() {});
-              });
             },
           ),
           ListTile(
@@ -175,14 +169,15 @@ class _MainPage extends State<MainPage> {
                           Timer.periodic(Duration(seconds: 1), (Timer timer) {
                         setState(() {
                           if (_discoverableTimeoutSecondsLeft < 0) {
-                            FlutterBluetoothSerial.instance.isDiscoverable
-                                .then((isDiscoverable) {
+                            FlutterBluetoothSerial.instance.isDiscoverable.then((isDiscoverable) {
+
                               if (isDiscoverable ?? false) {
-                                print(
-                                    "Discoverable after timeout... might be infinity timeout :F");
+                                print("Discoverable after timeout... might be infinity timeout :F");
+
                                 _discoverableTimeoutSecondsLeft += 1;
                               }
                             });
+
                             timer.cancel();
                             _discoverableTimeoutSecondsLeft = 0;
                           } else {
