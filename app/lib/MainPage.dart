@@ -298,7 +298,7 @@ class _MainPage extends State<MainPage> {
     );
   }
 
-  void _startChat(BuildContext context, BluetoothDevice server) {
+  /* void _startChat(BuildContext context, BluetoothDevice server) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
@@ -306,7 +306,7 @@ class _MainPage extends State<MainPage> {
         },
       ),
     );
-  }
+  } */
 
   Future<void> _startBackgroundTask(
     BuildContext context,
