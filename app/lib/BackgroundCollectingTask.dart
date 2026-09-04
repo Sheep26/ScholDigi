@@ -121,7 +121,7 @@ class BackgroundCollectingTask extends Model {
   Future<void> start() async {
     inProgress = true;
     _buffer.clear();
-    lastExercise = null;
+    currExercise = null;
     notifyListeners();
     _connection.output.add(ascii.encode('start'));
     await _connection.output.allSent;
@@ -130,7 +130,7 @@ class BackgroundCollectingTask extends Model {
   Future<void> cancel() async {
     inProgress = false;
     notifyListeners();
-    lastExercise = null;
+    currExercise = null;
     _connection.output.add(ascii.encode('stop'));
     await _connection.finish();
   }
