@@ -277,7 +277,7 @@ class _MainPage extends State<MainPage> {
               child: ListTile(
                 leading: Icon(Icons.nordic_walking),
                 title: Text("Tramp ${box.keys.length - index}"),
-                subtitle: Text(box.get(box.keys[box.keys.length - index - 1])),
+                subtitle: Text(box.get(box.keys[box.keys.length - index - 1])["start"]),
               ));
             })
       ),][_selectedIndex],
