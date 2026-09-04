@@ -6,11 +6,11 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:hive/hive.dart';
 
 class ExercisePoint {
-  double lat;
-  double lng;
-  double alt;
+  int lat;
+  int lng;
+  int alt;
   int time;
-  double speed;
+  int speed;
 
   ExercisePoint({
     required this.lat,
@@ -22,13 +22,13 @@ class ExercisePoint {
 }
 
 class Exercise {
-  double distance;
-  double avgSpeed;
-  double topSpeed;
-  double altDiff;
-  double avgAlt;
-  double minAlt;
-  double maxAlt;
+  int distance;
+  int avgSpeed;
+  int topSpeed;
+  int altDiff;
+  int avgAlt;
+  int minAlt;
+  int maxAlt;
   int start;
   int stop;
 
@@ -69,8 +69,8 @@ class BackgroundCollectingTask extends Model {
 
   final box = Hive.box();
 
-  int expectedSize = 72;
-  int expectedPointSize = 40;
+  int expectedSize = 44;
+  int expectedPointSize = 24;
 
   Exercise? currExercise;
   STATUS status = STATUS.idle;
@@ -84,14 +84,14 @@ class BackgroundCollectingTask extends Model {
         int index = _buffer.indexOf('t'.codeUnitAt(0));
 
         if (index >= 0 && _buffer.length - index >= expectedSize && status == STATUS.idle) {
-          final Exercise sample = Exercise(distance: 0, avgSpeed: 0, topSpeed: 0, avgAlt: 0, minAlt: 0, maxAlt: 0, altDiff: 0, start: 0, stop: 0);
+          final Exercise sample = Exercise(distance: _buffer[index], avgSpeed: _buffer[index + 4], topSpeed: _buffer[index + 8], avgAlt: _buffer[index + 12], minAlt: _buffer[index + 16], maxAlt: _buffer[index + 20], altDiff: _buffer[index + 24], start: _buffer[index + 28], stop: _buffer[index + 36]);
           _buffer.removeRange(0, index + expectedSize);
           currExercise = sample;
 
           status = STATUS.collecting;
           notifyListeners();
         } else if (index >= 0 && _buffer.length - index >= expectedPointSize && status == STATUS.collecting) {
-          final ExercisePoint sample = ExercisePoint(lat: 0, lng: 0, alt: 0, time: 0, speed: 0);
+          final ExercisePoint sample = ExercisePoint(lat: _buffer[index], lng: _buffer[index + 4], alt: _buffer[index + 8], time: _buffer[index + 12], speed: _buffer[index + 20]);
 
           currExercise?.points.add(sample);
           _buffer.removeRange(0, index + expectedPointSize);
