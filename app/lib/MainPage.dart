@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 import './BackgroundCollectingTask.dart';
-import './ChatPage.dart';
 import './DiscoveryPage.dart';
 import './SelectBondedDevicePage.dart';
 
@@ -277,7 +276,7 @@ class _MainPage extends State<MainPage> {
               child: ListTile(
                 leading: Icon(Icons.nordic_walking),
                 title: Text("Tramp ${box.keys.length - index}"),
-                subtitle: Text(box.get(box.keys[box.keys.length - index - 1])["start"]),
+                subtitle: Text(box.get(box.keys[box.keys.length - index - 1])['start'].toString()),
               ));
             })
       ),][_selectedIndex],
