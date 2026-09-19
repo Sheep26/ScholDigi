@@ -19,6 +19,16 @@ class ExercisePoint {
     required this.time,
     required this.speed
   });
+
+  Map<String, dynamic> toJson() {
+		return {
+			'lat': lat,
+			'lng': lng,
+			'alt': alt,
+			'time': time,
+			'speed': speed,
+		};
+	}
 }
 
 class Exercise {
@@ -45,6 +55,21 @@ class Exercise {
     required this.start,
     required this.stop
   });
+
+  Map<String, dynamic> toJson() {
+		return {
+			'distance': distance,
+			'avgSpeed': avgSpeed,
+			'topSpeed': topSpeed,
+			'altDiff': altDiff,
+			'avgAlt': avgAlt,
+			'minAlt': minAlt,
+			'maxAlt': maxAlt,
+			'start': start,
+			'stop': stop,
+			'points': points.map((point) => point.toJson()).toList(),
+		};
+	}
 }
 
 enum STATUS {
@@ -97,7 +122,7 @@ class BackgroundCollectingTask extends Model {
           _buffer.removeRange(0, index + expectedPointSize);
         } else {
           status = STATUS.idle;
-          box.put(box.keys.length.toString(), currExercise);
+          box.put(box.keys.length.toString(), currExercise?.toJson());
           break;
         }
       }

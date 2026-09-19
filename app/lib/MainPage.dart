@@ -6,6 +6,7 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import './BackgroundCollectingTask.dart';
 import './DiscoveryPage.dart';
 import './SelectBondedDevicePage.dart';
+import './TrampPage.dart';
 
 import 'package:hive/hive.dart';
 
@@ -277,7 +278,19 @@ class _MainPage extends State<MainPage> {
                 leading: Icon(Icons.nordic_walking),
                 title: Text("Tramp ${box.keys.length - index}"),
                 subtitle: Text(box.get(box.keys[box.keys.length - index - 1])['start'].toString()),
-              ));
+                onTap: () {
+                  setState(() {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => TrampPage(
+                          tramp: box.get(box.keys[box.keys.length - index - 1]),
+                          title: "Tramp ${box.keys.length - index}",
+                        ),
+                      ),
+                    );
+                  });
+                },
+              ),);
             })
       ),][_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
