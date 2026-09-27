@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:hive/hive.dart';
+import 'dart:typed_data';
 
 class ExercisePoint {
   int lat;
@@ -94,11 +95,27 @@ class BackgroundCollectingTask extends Model {
 
   final box = Hive.box();
 
-  int expectedSize = 44;
-  int expectedPointSize = 24;
+  int expectedSize = 72;
+  int expectedPointSize = 40;
 
   Exercise? currExercise;
   STATUS status = STATUS.idle;
+
+  int readDouble(int index) {
+    final bytes = Uint8List.fromList(
+      _buffer.sublist(index, index + 8),
+    );
+
+    return ByteData.sublistView(bytes).getFloat64(0, Endian.little).toInt();
+  }
+
+  int readInt64(int index) {
+    final bytes = Uint8List.fromList(
+      _buffer.sublist(index, index + 8),
+    );
+
+    return ByteData.sublistView(bytes).getInt64(0, Endian.little);
+  }
 
   BackgroundCollectingTask._fromConnection(this._connection) {
     _connection.input!.listen((data) {
@@ -109,14 +126,14 @@ class BackgroundCollectingTask extends Model {
         int index = _buffer.indexOf('t'.codeUnitAt(0));
 
         if (index >= 0 && _buffer.length - index >= expectedSize && status == STATUS.idle) {
-          final Exercise sample = Exercise(distance: _buffer[index], avgSpeed: _buffer[index + 4], topSpeed: _buffer[index + 8], avgAlt: _buffer[index + 12], minAlt: _buffer[index + 16], maxAlt: _buffer[index + 20], altDiff: _buffer[index + 24], start: _buffer[index + 28], stop: _buffer[index + 36]);
+          final sample = Exercise(distance: readDouble(index), avgSpeed: readDouble(index + 8), topSpeed: readDouble(index + 16), altDiff: readDouble(index + 24), avgAlt: readDouble(index + 32), minAlt: readDouble(index + 40), maxAlt: readDouble(index + 48), start: readInt64(index + 56), stop: readInt64(index + 64),);
           _buffer.removeRange(0, index + expectedSize);
           currExercise = sample;
 
           status = STATUS.collecting;
           notifyListeners();
         } else if (index >= 0 && _buffer.length - index >= expectedPointSize && status == STATUS.collecting) {
-          final ExercisePoint sample = ExercisePoint(lat: _buffer[index], lng: _buffer[index + 4], alt: _buffer[index + 8], time: _buffer[index + 12], speed: _buffer[index + 20]);
+          final ExercisePoint sample = ExercisePoint(lat: readDouble(index), lng: readDouble(index + 8), alt: readDouble(index + 16), time: readInt64(index + 24), speed: readDouble(index + 32));
 
           currExercise?.points.add(sample);
           _buffer.removeRange(0, index + expectedPointSize);
