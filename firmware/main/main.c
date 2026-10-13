@@ -149,7 +149,7 @@ void app_main(void) {
     check_i2c(I2C_SSD1306_DEV_ADDR);
 #endif
 
-    //setup_gpio();
+    setup_gpio();
 
 #ifdef DISPLAY
     ssd1306_config_t ssd1306_config = I2C_SSD1306_128x64_CONFIG_DEFAULT;
@@ -162,11 +162,14 @@ void app_main(void) {
 
     ssd1306_clear_display(ssd1306_handle, false);
     ssd1306_set_contrast(ssd1306_handle, 0xFF);
+
+    ssd1306_display_text(ssd1306_handle, 0, "Welcome", false);
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
 #endif
 
     // Start gps task.
-    //xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 0);
-    GPSTask(NULL);
+    xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 0);
+    //GPSTask(NULL);
     // Set timezone.
     setenv("TZ", "NZST-12NZDT,M9.5.0/02:00:00,M4.1.0/03:00:00", 1);
     tzset();
@@ -255,21 +258,16 @@ void app_main(void) {
             vTaskDelay(pdMS_TO_TICKS(10));
         }
 
-        //printf("Satellites: %d\n", getSatellites());
-
-        // Print time.
-        char strftime_buf[64];
-
-        //strftime(strftime_buf, sizeof(strftime_buf), "%c", &current_time);
-        //printf("%s\n", strftime_buf);
-
-
-        char buffy[64];
-        snprintf(buffy, sizeof(buffy), "Lat: %f\nLng: %f", getLat(), getLng());
-
 #ifdef DISPLAY
+        char buf1[64];
+        snprintf(buf1, sizeof(buf1), "Satelittes: %d", getSatellites());
+
+        char strftime_buf[64];
+        strftime(strftime_buf, sizeof(strftime_buf), "%c", &current_time);
+
         ssd1306_clear_display(ssd1306_handle);
-        ssd1306_display_text(ssd1306_handle, 0, buffy, false);
+        ssd1306_display_text(ssd1306_handle, 0, strftime_buf, false);
+        ssd1306_display_text(ssd1306_handle, 0, buf1, false);
 #endif
 
         if (current_exercise && getLocationValid() && getSatellites()) {
