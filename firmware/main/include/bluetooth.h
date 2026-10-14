@@ -1,7 +1,7 @@
 #ifndef BLUETOOTH_H
 #define BLUETOOTH_H
 
-#include "esp_spp_api.h"
+#include "ble_uart.h"
 
 void bluetooth_init();
 

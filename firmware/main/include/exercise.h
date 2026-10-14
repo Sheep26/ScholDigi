@@ -11,6 +11,7 @@
 #define EXERCISE_POINT_H
 
 #include <time.h>
+#include <ssd1306.h>
 
 struct exercise_point;
 
@@ -39,6 +40,10 @@ typedef struct {
     exercise_point_t *last;
 } exercise_t;
 
+void setup_display_handle(ssd1306_handle_t handle);
 void addExercisePoint(exercise_t *exercise, exercise_point_t *point);
+exercise_t *getExercise();
+void toggleExercise(time_t *time_epoch);
+
 
 #endif

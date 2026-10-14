@@ -65,6 +65,6 @@ int digital_read(uint8_t pin) {
     return pcf_digital_read(pin);
 #else
     // TODO
-    return 0;
+    return 1;
 #endif
 }

@@ -18,15 +18,17 @@
 #include "esp_system.h"
 #include "driver/uart.h"
 #include "driver/i2c_master.h"
+#include <bluetooth.h>
+#include "nvs_flash.h"
 
 int timeSetup = 0;
 int locationValid = 0;
 int sleeping = 0;
 struct tm lastButtonPress;
 
-exercise_t *current_exercise;
-i2c_master_bus_handle_t i2c_bus_handle;
+int rah = 0;
 
+i2c_master_bus_handle_t i2c_bus_handle;
 ssd1306_handle_t ssd1306_handle;
 
 void check_i2c(uint8_t addr) {
@@ -110,6 +112,15 @@ void app_main(void) {
         .dont_mount = 0
     };
 
+    esp_err_t ret = nvs_flash_init();
+
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        ret = nvs_flash_init();
+    }
+
+    ESP_ERROR_CHECK(ret);
+
     /*ESP_ERROR_CHECK(esp_vfs_littlefs_register(&fs_conf));
 
     size_t total = 0, used = 0;
@@ -165,7 +176,11 @@ void app_main(void) {
 
     ssd1306_display_text(ssd1306_handle, 0, "Welcome", false);
     vTaskDelay(2000 / portTICK_PERIOD_MS);
+
+    setup_display_handle(ssd1306_handle);
 #endif
+
+    bluetooth_init();
 
     // Start gps task.
     xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 0);
@@ -203,83 +218,35 @@ void app_main(void) {
 #endif
 
         if (!digital_read(START_PIN)) {
-            if (!current_exercise)
-                current_exercise = (exercise_t*) calloc(1, sizeof(exercise_t));
-            else {
-                // Handle putting exercise into storage eventually.
-                exercise_point_t *p = current_exercise->list;
-                exercise_point_t *l = (void*) 0;
-
-                int div = 0;
-
-                while (p) {
-                    // Add exercise distance.
-                    if (l) {
-                        current_exercise->distance += distanceBetweenPoints(l, p);
-
-                        l = (void*) 0;
-                    } else
-                        l = p;
-
-                    current_exercise->max_alt = p->alt > current_exercise->max_alt ? p->alt : current_exercise->max_alt;
-                    current_exercise->min_alt = (p->alt < current_exercise->min_alt || !current_exercise->min_alt) ? p->alt : current_exercise->min_alt;
-                    current_exercise->top_speed = p->speed > current_exercise->top_speed ? p->speed : current_exercise->top_speed;
-
-                    current_exercise->alt_diff = current_exercise->max_alt - current_exercise->min_alt;
-                    current_exercise->avg_alt += p->alt;
-                    current_exercise->avg_speed += p->speed;
-
-                    div++;                    
-                    p = p->next;
-                }
-
-                current_exercise->avg_alt = current_exercise->avg_alt / div;
-                current_exercise->avg_speed = current_exercise->avg_speed / div;
-
-                current_exercise->stop = time_epoch;
-                // We have calculated all our things so we need to store it now.
-
-                printf("Distance: %f", current_exercise->distance);
-
-                // Free exercise from memory.
-                exercise_point_t *pointah = current_exercise->list;
-
-                while (pointah) {
-                    exercise_point_t *next = p->next;
-
-                    free(pointah);
-                    pointah = next;
-                }
-
-                free(current_exercise);
-                current_exercise = (void*) 0; // Set current exercise to null instead of having it reference unallocated memory.
-            }
+            toggleExercise(&time_epoch);
 
             vTaskDelay(pdMS_TO_TICKS(10));
         }
 
 #ifdef DISPLAY
-        char buf1[64];
-        snprintf(buf1, sizeof(buf1), "Satelittes: %d", getSatellites());
+        if (rah % 100 == 0) {
+            char buf1[64];
+            snprintf(buf1, sizeof(buf1), "Satelittes: %d", getSatellites());
 
-        char strftime_buf[64];
-        strftime(strftime_buf, sizeof(strftime_buf), "%c", &current_time);
+            char strftime_buf[64];
+            strftime(strftime_buf, sizeof(strftime_buf), "%c", &current_time);
 
-        ssd1306_clear_display(ssd1306_handle);
-        ssd1306_display_text(ssd1306_handle, 0, strftime_buf, false);
-        ssd1306_display_text(ssd1306_handle, 0, buf1, false);
+            ssd1306_clear_display(ssd1306_handle, false);
+            ssd1306_display_text(ssd1306_handle, 0, strftime_buf, false);
+            ssd1306_display_text(ssd1306_handle, 0, buf1, false);
+        }
 #endif
 
-        if (current_exercise && getLocationValid() && getSatellites()) {
+        if (getExercise() && getLocationValid() && getSatellites()) {
             // Check if things have changed or if there just hasn't been a point yet.
-            if (!current_exercise->list || !current_exercise->last || getLat() != current_exercise->last->lat || getLng() != current_exercise->last->lng || getAlititude() != current_exercise->last->alt) {
+            if (!getExercise()->list || !getExercise()->last || getLat() != getExercise()->last->lat || getLng() != getExercise()->last->lng || getAlititude() != getExercise()->last->alt) {
                 // Create pointer for exercise point struct.
                 exercise_point_t *point = (exercise_point_t*) malloc(sizeof(exercise_point_t));
                 assert(point);
 
                 // Set variables.
-                if (!current_exercise->start)
-                    current_exercise->start = time_epoch;
+                if (!getExercise()->start)
+                    getExercise()->start = time_epoch;
 
                 point->lat = getLat();
                 point->lng = getLng();
@@ -288,9 +255,11 @@ void app_main(void) {
                 point->time = time_epoch;
 
                 // Add point.
-                addExercisePoint(current_exercise, point);
+                addExercisePoint(getExercise(), point);
             }
         }
+        
+        rah++;
     }
 
     // Reset ESP32 incase while loop ever exits.
