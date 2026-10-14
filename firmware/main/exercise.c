@@ -66,7 +66,7 @@ void toggleExercise() {
 
         current_exercise->stop = time_epoch;
 
-        exercise_send_t *send_struct = (exercise_send_t *) calloc(1, sizeof(exercise_send_t));
+        exercise_send_t *send_struct = (exercise_send_t *) malloc(sizeof(exercise_send_t));
         send_struct->distance = current_exercise->distance;
         send_struct->max_alt = current_exercise->max_alt;
         send_struct->min_alt = current_exercise->min_alt;
@@ -82,7 +82,7 @@ void toggleExercise() {
 
         while (pointah) {
             exercise_point_t *next = p->next;
-            exercise_point_send_t *send_point_struct = (exercise_point_send_t *) calloc(1, sizeof(exercise_point_send_t));
+            exercise_point_send_t *send_point_struct = (exercise_point_send_t *) malloc(sizeof(exercise_point_send_t));
             send_point_struct->alt = next->alt;
             send_point_struct->lat = next->lat;
             send_point_struct->lng = next->lng;
