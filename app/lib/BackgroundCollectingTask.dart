@@ -96,7 +96,7 @@ class BackgroundCollectingTask extends Model {
   final box = Hive.box();
 
   int expectedSize = 72;
-  int expectedPointSize = 44;
+  int expectedPointSize = 40;
 
   Exercise? currExercise;
   STATUS status = STATUS.idle;
