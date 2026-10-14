@@ -32,7 +32,7 @@ void toggleExercise() {
     time_t time_epoch = mktime(&current_time);
 
     if (!current_exercise)
-        current_exercise = (exercise_t*) calloc(1, sizeof(exercise_t));
+        current_exercise = (exercise_t*) malloc(sizeof(exercise_t));
     else {
         // Handle putting exercise into storage eventually.
         exercise_point_t *p = current_exercise->list;
