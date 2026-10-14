@@ -4,6 +4,6 @@
 #include "ble_uart.h"
 
 void bluetooth_init();
-void ble_send_data(void *data);
+void ble_send_data(void *data, size_t size);
 
 #endif

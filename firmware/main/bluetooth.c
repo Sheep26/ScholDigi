@@ -8,8 +8,8 @@
 
 static const char *TAG = "BLE";
 
-void ble_send_data(void *data) {
-    ble_uart_tx(data, sizeof(data));
+void ble_send_data(void *data, size_t size) {
+    ble_uart_tx(data, size);
 }
 
 static void ble_uart_on_rx(const uint8_t *data, size_t len){
@@ -21,10 +21,14 @@ static void ble_uart_on_rx(const uint8_t *data, size_t len){
     ESP_LOG_BUFFER_HEX(TAG, data, len);
     printf("%s", data);
 
-    if (data == "start" || data == "stop") {
-        toggleExercise();
-
-        ble_send_data(data);
+    char buf[64];     
+    size_t copy_len = (len < sizeof(buf) - 1) ? len : sizeof(buf) - 1;
+    memcpy(buf, data, copy_len);
+    buf[copy_len] = '\0';
+    
+    if (strcmp(buf, "start") == 0 || strcmp(buf, "stop") == 0) {         
+        toggleExercise();          
+        ble_send_data((uint8_t *) buf, strlen(buf));
     }
 }
 

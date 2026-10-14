@@ -20,6 +20,7 @@
 #include "driver/i2c_master.h"
 #include <bluetooth.h>
 #include "nvs_flash.h"
+#include <gettime.h>
 
 int timeSetup = 0;
 int locationValid = 0;
@@ -50,16 +51,6 @@ void scan_i2c() {
         check_i2c(addr);
 }
 
-struct tm getTime() {
-    time_t now;
-    struct tm timeinfo;
-
-    time(&now);
-    localtime_r(&now, &timeinfo);
-
-    return timeinfo;
-}
-
 void setupTimeGPS() {
     // Set date and time.
     if (!getDateValid() || !getTimeValid())
@@ -83,7 +74,7 @@ void setupTimeGPS() {
     timeSetup = 1;
 }
 
-void main(void) {
+void loop(void *params) {
     // Loop
     while (1) {
         if (!timeSetup)
@@ -126,7 +117,8 @@ void main(void) {
             ssd1306_display_text(ssd1306_handle, 0, buf1, false);
         }
 #endif
-        exercise_point_t *current_exercise = getExercise();
+        exercise_t *current_exercise = getExercise();
+
         if (current_exercise && getLocationValid() && getSatellites()) {
             // Check if things have changed or if there just hasn't been a point yet.
             if (!current_exercise->list || !current_exercise->last || getLat() != current_exercise->last->lat || getLng() != current_exercise->last->lng || getAlititude() != current_exercise->last->alt) {
@@ -262,7 +254,7 @@ void app_main(void) {
     
     // Start tasks.
     xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 0);
-    xTaskCreatePinnedToCore(main, "MAIN", 4096, NULL, 5, NULL, 0);  
+    xTaskCreatePinnedToCore(loop, "MAIN", 4096, NULL, 5, NULL, 0);  
 
     bluetooth_init();
 
