@@ -24,7 +24,7 @@ static void ble_uart_on_rx(const uint8_t *data, size_t len){
     if (data == "start" || data == "stop") {
         toggleExercise();
 
-        ble_send_data(data)''
+        ble_send_data(data);
     }
 }
 
