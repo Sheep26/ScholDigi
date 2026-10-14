@@ -250,7 +250,7 @@ void app_main(void) {
     struct timeval now = { .tv_sec = 1782734400, .tv_usec=0 };
     settimeofday(&now, NULL);
 
-    lastButtonPress = getTime(); 
+    lastButtonPress = getTime();
     
     // Start tasks.
     xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 0);

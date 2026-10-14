@@ -12,24 +12,28 @@ void ble_send_data(void *data, size_t size) {
     ble_uart_tx(data, size);
 }
 
-static void ble_uart_on_rx(const uint8_t *data, size_t len){
+void ble_uart_on_rx(const uint8_t *data, size_t len){
     ESP_LOGI(TAG, "rx len: %u bytes", (unsigned) len);
 
     if (data == NULL || len == 0)
         return;
 
     ESP_LOG_BUFFER_HEX(TAG, data, len);
-    printf("%s", data);
 
-    char buf[64];     
-    size_t copy_len = (len < sizeof(buf) - 1) ? len : sizeof(buf) - 1;
-    memcpy(buf, data, copy_len);
-    buf[copy_len] = '\0';
+    char buf[64];
+    size_t n = len;
 
-    if (strcmp(buf, "start") == 0 || strcmp(buf, "stop") == 0) {         
-        toggleExercise();          
-        ble_send_data((uint8_t *) buf, strlen(buf));
-    }
+    if (n >= sizeof(buf))
+        n = sizeof(buf) - 1;
+
+    memcpy(buf, data, n);
+    buf[n] = '\0';
+
+    while (n > 0 && (buf[n - 1] == '\r' || buf[n - 1] == '\n'))
+        buf[--n] = '\0';
+
+    if (strcmp(buf, "start") == 0 || strcmp(buf, "stop") == 0)
+        toggleExercise();
 }
 
 void bluetooth_init() {
