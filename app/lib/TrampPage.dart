@@ -12,6 +12,15 @@ class TrampPage extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
+    final start = DateTime.fromMillisecondsSinceEpoch((tramp['start'] as num).toInt());
+    final stop = DateTime.fromMillisecondsSinceEpoch((tramp['stop'] as num).toInt());
+    final distance = (tramp['distance'] as num).toDouble().toStringAsFixed(2);
+    final avgSpeed = (tramp['avgSpeed'] as num).toDouble().toStringAsFixed(2);
+    final topSpeed = (tramp['topSpeed'] as num).toDouble().toStringAsFixed(2);
+    final altDiff = (tramp['altDiff'] as num).toDouble().toStringAsFixed(2);
+    final avgAlt = (tramp['avgAlt'] as num).toDouble().toStringAsFixed(2);
+    final minAlt = (tramp['minAlt'] as num).toDouble().toStringAsFixed(2);
+    final maxAlt = (tramp['maxAlt'] as num).toDouble().toStringAsFixed(2);
 		return Scaffold(
 			appBar: AppBar(
 				title: Text(title),
@@ -22,39 +31,39 @@ class TrampPage extends StatelessWidget {
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: [
 						Text(
-							'Start: ${tramp['start']}',
+							'Start: ${start.hour}:${start.minute} ${start.day}/${start.month}/${start.year}',
 							style: const TextStyle(fontSize: 18),
 						),
 						Text(
-							'Stop: ${tramp['stop']}',
+							'Stop: ${stop.hour}:${stop.minute} ${stop.day}/${stop.month}/${stop.year}',
 							style: const TextStyle(fontSize: 18),
 						),
 						Text(
-							'Distance: ${tramp['distance']}',
+							'Distance: ${distance}m',
 							style: const TextStyle(fontSize: 18),
 						),
 						Text(
-							'Average Speed: ${tramp['avgSpeed']}',
+							'Average Speed: ${avgSpeed}kmph',
 							style: const TextStyle(fontSize: 18),
 						),
 						Text(
-							'Top Speed: ${tramp['topSpeed']}',
+							'Top Speed: ${topSpeed}kmph',
 							style: const TextStyle(fontSize: 18),
 						),
 						Text(
-							'Altitude Difference: ${tramp['altDiff']}',
+							'Altitude Difference: ${altDiff}m',
 							style: const TextStyle(fontSize: 18),
 						),
 						Text(
-							'Average Altitude: ${tramp['avgAlt']}',
+							'Average Altitude: ${avgAlt}m',
 							style: const TextStyle(fontSize: 18),
 						),
 						Text(
-							'Min Altitude: ${tramp['minAlt']}',
+							'Min Altitude: ${minAlt}m',
 							style: const TextStyle(fontSize: 18),
 						),
 						Text(
-							'Max Altitude: ${tramp['maxAlt']}',
+							'Max Altitude: ${maxAlt}m',
 							style: const TextStyle(fontSize: 18),
 						),
 					],

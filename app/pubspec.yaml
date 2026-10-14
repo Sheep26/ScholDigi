@@ -42,7 +42,9 @@ dependencies:
 
   flutter_bluetooth_serial:
     path: third_party/flutter_bluetooth_serial
-  #flutter_classic_bluetooth: ^1.1.0
+  permission_handler: ^13.0.2
+  flutter_blue_plus: ^2.3.14
+  intl: ^0.20.3
 
 dev_dependencies:
   flutter_test:

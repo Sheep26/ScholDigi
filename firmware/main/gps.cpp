@@ -29,33 +29,27 @@ void GPSTask(void *params) {
     }
 }
 
-/* double getLat() {
-    return gps.location.lat();
-}
-
-double getLng() {
-    return gps.location.lng();
-} */
-
 double getLat() {
+    //return gps.location.lat();
     lat += 0.000001;
     return lat;
 }
 
 double getLng() {
+    //return gps.location.lng();
     lng += 0.000001;
     return lng;
 }
 
 double getSpeed() {
-    // return gps.speed.kmph();
-    speed += 0.5;
+    //return gps.speed.kmph();
+    speed += 0.2;
     return speed;
 }
 
 double getAlititude() {
     //return gps.altitude.meters();
-    alt += 0.7;
+    alt += 0;
     return alt;
 }
 
@@ -89,15 +83,15 @@ uint8_t getSecond() {
 
 int getLocationValid() {
     // return gps.location.isValid();
-    return true;
+    return gps.location.isValid() || true;
 }
 
 int getTimeValid() {
     // return gps.time.isValid();
-    return true;
+    return gps.time.isValid() || true;
 }
 
 int getDateValid() {
     // return gps.time.isValid();
-    return true;
+    return gps.time.isValid() || true;
 }

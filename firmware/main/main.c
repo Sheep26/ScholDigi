@@ -91,6 +91,11 @@ void display_task(void *params) {
         }
 
         vTaskDelay(pdMS_TO_TICKS(1000));
+
+        if (display_next_update > 10 && display_next_update - 1000 < 10) {
+            ssd1306_clear_display(ssd1306_handle, false);
+        }
+
         display_next_update -= 1000;
     }
 }

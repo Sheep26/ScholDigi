@@ -42,8 +42,7 @@ void toggleExercise() {
     if (!current_exercise) {
         current_exercise = (exercise_t*) calloc(1, sizeof(exercise_t));
         current_exercise->start = time_epoch;
-    }
-    else {
+    } else {
         if (current_exercise->list) {
             exercise_point_t *p = current_exercise->list;
 
@@ -99,11 +98,20 @@ void toggleExercise() {
             display_next_update = 3000;
             ssd1306_clear_display(display_handle, false);
 
-            char buf1[64];
-            snprintf(buf1, sizeof(buf1), "Distance: %dm", (int) current_exercise->distance);
+            ssd1306_display_text(display_handle, 0, "Exercise", false);
+            char buf[64];
 
-            ssd1306_display_text(display_handle, 2, buf1, false);
-            ssd1306_clear_display(display_handle, false);
+            snprintf(buf, sizeof(buf), "Distance: %dm", (int) current_exercise->distance);
+            ssd1306_display_text(display_handle, 1, buf, false);
+
+            snprintf(buf, sizeof(buf), "Avg Speed: %dm", (int) current_exercise->avg_speed);
+            ssd1306_display_text(display_handle, 2, buf, false);
+
+            snprintf(buf, sizeof(buf), "Min Alt: %dm", (int) current_exercise->min_alt);
+            ssd1306_display_text(display_handle, 3, buf, false);
+
+            snprintf(buf, sizeof(buf), "Max Alt: %dm", (int) current_exercise->max_alt);
+            ssd1306_display_text(display_handle, 4, buf, false);
         }
 
         free(current_exercise);

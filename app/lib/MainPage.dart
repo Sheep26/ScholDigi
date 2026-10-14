@@ -1,11 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 import './BackgroundCollectingTask.dart';
 import './DiscoveryPage.dart';
-import './SelectBondedDevicePage.dart';
 import './TrampPage.dart';
 
 import 'package:hive/hive.dart';
@@ -20,19 +19,15 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPage extends State<MainPage> {
-  BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
-
-  String _address = "...";
-  String _name = "...";
-
-  Timer? _discoverableTimeoutTimer;
-  int _discoverableTimeoutSecondsLeft = 0;
+  BluetoothAdapterState _bluetoothState = BluetoothAdapterState.unknown;
 
   BackgroundCollectingTask? _collectingTask;
 
-  bool _autoAcceptPairingRequests = false;
-
   int _selectedIndex = 0;
+  BluetoothDevice? connectedDevice;
+
+  StreamSubscription<BluetoothAdapterState>? _adapterSubscription;
+  StreamSubscription<BluetoothConnectionState>? _connectionSubscription;
 
   final box = Hive.box();
 
@@ -40,54 +35,22 @@ class _MainPage extends State<MainPage> {
   void initState() {
     super.initState();
 
-    // Get current state
-    FlutterBluetoothSerial.instance.state.then((state) {
+    _adapterSubscription =
+        FlutterBluePlus.adapterState.listen((state) {
+      if (!mounted) return;
+
       setState(() {
         _bluetoothState = state;
-      });
-    });
-
-    Future.doWhile(() async {
-      // Wait if adapter not enabled
-      if ((await FlutterBluetoothSerial.instance.isEnabled) ?? false) {
-        return false;
-      }
-      await Future.delayed(Duration(milliseconds: 0xDD));
-      return true;
-    }).then((_) {
-      // Update the address field
-      FlutterBluetoothSerial.instance.address.then((address) {
-        setState(() {
-          _address = address!;
-        });
-      });
-    });
-
-    FlutterBluetoothSerial.instance.name.then((name) {
-      setState(() {
-        _name = name!;
-      });
-    });
-
-    // Listen for futher state changes
-    FlutterBluetoothSerial.instance
-        .onStateChanged()
-        .listen((BluetoothState state) {
-      setState(() {
-        _bluetoothState = state;
-
-        // Discoverable mode is disabled when Bluetooth gets disabled
-        _discoverableTimeoutTimer = null;
-        _discoverableTimeoutSecondsLeft = 0;
       });
     });
   }
 
   @override
   void dispose() {
-    FlutterBluetoothSerial.instance.setPairingRequestHandler(null);
-    _collectingTask?.dispose();
-    _discoverableTimeoutTimer?.cancel();
+    _adapterSubscription?.cancel();
+    _connectionSubscription?.cancel();
+
+    // Don't disconnect here: the connection may be used elsewhere.
     super.dispose();
   }
 
@@ -107,119 +70,17 @@ class _MainPage extends State<MainPage> {
         children: <Widget>[
           SwitchListTile(
             title: const Text('Enable Bluetooth'),
-            value: _bluetoothState.isEnabled,
+            value: _bluetoothState == BluetoothAdapterState.on,
             onChanged: (bool value) {
-              if (value) {
-                FlutterBluetoothSerial.instance.requestEnable().then((_) => {setState(() {})});
-              } else {
-                FlutterBluetoothSerial.instance.requestDisable().then((_) => {setState(() {})});
-              }
+              
             },
-          ),
-          ListTile(
-            title: const Text('Bluetooth status'),
-            subtitle: Text(_bluetoothState.toString()),
-            trailing: ElevatedButton(
-              child: const Text('Settings'),
-              onPressed: () {
-                FlutterBluetoothSerial.instance.openSettings();
-              },
-            ),
-          ),
-          ListTile(
-            title: const Text('Local adapter address'),
-            subtitle: Text(_address),
-          ),
-          ListTile(
-            title: const Text('Local adapter name'),
-            subtitle: Text(_name),
-            onLongPress: null,
-          ),
-          ListTile(
-            title: _discoverableTimeoutSecondsLeft == 0
-                ? const Text("Discoverable")
-                : Text(
-                    "Discoverable for ${_discoverableTimeoutSecondsLeft}s"),
-            subtitle: const Text("PsychoX-Luna"),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Checkbox(
-                  value: _discoverableTimeoutSecondsLeft != 0,
-                  onChanged: null,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: null,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.refresh),
-                  onPressed: () async {
-                    print('Discoverable requested');
-                    final int timeout = (await FlutterBluetoothSerial.instance.requestDiscoverable(60))!;
-                    if (timeout < 0) {
-                      print('Discoverable mode denied');
-                    } else {
-                      print('Discoverable mode acquired for $timeout seconds');
-                    }
-                    setState(() {
-                      _discoverableTimeoutTimer?.cancel();
-                      _discoverableTimeoutSecondsLeft = timeout;
-                      _discoverableTimeoutTimer =
-                          Timer.periodic(Duration(seconds: 1), (Timer timer) {
-                        setState(() {
-                          if (_discoverableTimeoutSecondsLeft < 0) {
-                            FlutterBluetoothSerial.instance.isDiscoverable.then((isDiscoverable) {
-
-                              if (isDiscoverable ?? false) {
-                                print("Discoverable after timeout... might be infinity timeout :F");
-
-                                _discoverableTimeoutSecondsLeft += 1;
-                              }
-                            });
-
-                            timer.cancel();
-                            _discoverableTimeoutSecondsLeft = 0;
-                          } else {
-                            _discoverableTimeoutSecondsLeft -= 1;
-                          }
-                        });
-                      });
-                    });
-                  },
-                )
-              ],
-            ),
           ),
           Divider(),
-          ListTile(title: const Text('Devices discovery and connection')),
-          SwitchListTile(
-            title: const Text('Auto-try specific pin when pairing'),
-            subtitle: const Text('Pin 1234'),
-            value: _autoAcceptPairingRequests,
-            onChanged: (bool value) {
-              setState(() {
-                _autoAcceptPairingRequests = value;
-              });
-              if (value) {
-                FlutterBluetoothSerial.instance.setPairingRequestHandler((BluetoothPairingRequest request) {
-                  print("Trying to auto-pair with Pin 1234");
-                  if (request.pairingVariant == PairingVariant.Pin) {
-                    return Future.value("1234");
-                  }
-                  return Future.value(null);
-                });
-              } else {
-                FlutterBluetoothSerial.instance.setPairingRequestHandler(null); //mibah was here :3
-              }
-            },
-          ),
           ListTile(
             title: ElevatedButton(
                 child: const Text('Explore discovered devices'),
                 onPressed: () async {
-                  final BluetoothDevice? selectedDevice =
-                      await Navigator.of(context).push(
+                  final device = await Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
                         return DiscoveryPage();
@@ -227,72 +88,71 @@ class _MainPage extends State<MainPage> {
                     ),
                   );
 
-                  if (selectedDevice != null) {
-                    print('Discovery -> selected ${selectedDevice.address}');
-                  } else {
-                    print('Discovery -> no device selected');
-                  }
+                  connectedDevice = device;
+                  _startBackgroundTask(context, device);
                 }),
-          ),
-          Divider(),
-          ListTile(
-            title: ElevatedButton(
-              child: ((_collectingTask?.inProgress ?? false)
-                  ? const Text('Disconnect and stop background collecting')
-                  : const Text('Connect to start background collecting')),
-              onPressed: () async {
-                if (_collectingTask?.inProgress ?? false) {
-                  await _collectingTask!.cancel();
-                  setState(() {
-                    /* Update for `_collectingTask.inProgress` */
-                  });
-                } else {
-                  final BluetoothDevice? selectedDevice =
-                      await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return SelectBondedDevicePage(
-                            checkAvailability: false);
-                      },
-                    ),
-                  );
-
-                  if (selectedDevice != null) {
-                    await _startBackgroundTask(context, selectedDevice);
-                    setState(() {
-                      /* Update for `_collectingTask.inProgress` */
-                    });
-                  }
-                }
-              },
-            ),
-          ),
+          )
         ],
       ),
-      Padding(
-        padding: const .all(8.0),
-        child:
-          ListView.builder(itemCount: box.keys.length, itemBuilder: (context, index) {
-            return Card(
-              child: ListTile(
-                leading: Icon(Icons.nordic_walking),
-                title: Text("Tramp ${box.keys.length - index}"),
-                subtitle: Text(box.get(box.keys[box.keys.length - index - 1])['start'].toString()),
-                onTap: () {
-                  setState(() {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => TrampPage(
-                          tramp: box.get(box.keys[box.keys.length - index - 1]),
-                          title: "Tramp ${box.keys.length - index}",
-                        ),
-                      ),
-                    );
-                  });
+      ListView.builder(
+        padding: const EdgeInsets.all(8.0),
+        itemCount: box.keys.length + 1,
+        itemBuilder: (context, index) {
+          // First item: Start/Stop button
+          if (index == 0) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                child: Text(_collectingTask?.inProgress == true ? 'Stop Tramp' : 'Start Tramp'),
+                onPressed: () async {
+                  final task = _collectingTask;
+
+                  if (task == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Connect to a device first.'),),);
+                    return;
+                  }
+
+                  if (task.inProgress) {
+                    await task.stop();
+                  } else {
+                    await task.start();
+                  }
+
+                  if (mounted) {
+                    setState(() {});
+                  }
                 },
-              ),);
-            })
-      ),][_selectedIndex],
+              ),
+            );
+          }
+
+          // Remaining items: saved tramps
+          final keys = box.keys.toList();
+          final key = keys[keys.length - index];
+          final tramp = box.get(key);
+
+          final start = DateTime.fromMillisecondsSinceEpoch((tramp['start'] as num).toInt());
+
+          return Card(
+            child: ListTile(
+              leading: const Icon(Icons.nordic_walking),
+              title: Text('Tramp ${box.keys.length - index + 1}'),
+              subtitle: Text('${start.hour}:${start.minute} ${start.day}/${start.month}/${start.year}'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => TrampPage(
+                      tramp: tramp,
+                      title: 'Tramp ${box.keys.length - index + 1}',
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
+      ][_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.bluetooth), label: 'Bluetooth'),
@@ -315,31 +175,38 @@ class _MainPage extends State<MainPage> {
     );
   } */
 
-  Future<void> _startBackgroundTask(
-    BuildContext context,
-    BluetoothDevice server,
-  ) async {
+  Future<void> _startBackgroundTask(BuildContext context, BluetoothDevice server) async {
     try {
+      // The device must already be connected by DiscoveryPage.
       _collectingTask = await BackgroundCollectingTask.connect(server);
-      await _collectingTask!.start();
+
+      // await _collectingTask!.start();
+
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Exercise collection started'),
+        ),
+      );
     } catch (ex) {
-      _collectingTask?.cancel();
-      showDialog(
+      await _collectingTask?.dispose();
+      _collectingTask = null;
+
+      if (!context.mounted) return;
+
+      showDialog<void>(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Error occured while connecting'),
-            content: Text(ex.toString()),
-            actions: <Widget>[
-              TextButton(
-                child: Text("Close"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Error starting collection'),
+          content: Text(ex.toString()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Close'),
+            ),
+          ],
+        ),
       );
     }
   }

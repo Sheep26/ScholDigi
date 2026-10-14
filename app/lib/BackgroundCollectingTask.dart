@@ -1,49 +1,52 @@
+import 'dart:async';
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import 'package:scoped_model/scoped_model.dart';
-import 'package:hive/hive.dart';
 import 'dart:typed_data';
 
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:hive/hive.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter/material.dart';
+
+const String uartServiceUuid = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
+const String uartWriteUuid = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
+const String uartNotifyUuid = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
+
 class ExercisePoint {
-  int lat;
-  int lng;
-  int alt;
+  double lat;
+  double lng;
+  double alt;
   int time;
-  int speed;
+  double speed;
 
   ExercisePoint({
     required this.lat,
     required this.lng,
     required this.alt,
     required this.time,
-    required this.speed
+    required this.speed,
   });
 
-  Map<String, dynamic> toJson() {
-		return {
-			'lat': lat,
-			'lng': lng,
-			'alt': alt,
-			'time': time,
-			'speed': speed,
-		};
-	}
+  Map<String, dynamic> toJson() => {
+        'lat': lat,
+        'lng': lng,
+        'alt': alt,
+        'time': time,
+        'speed': speed,
+      };
 }
 
 class Exercise {
-  int distance;
-  int avgSpeed;
-  int topSpeed;
-  int altDiff;
-  int avgAlt;
-  int minAlt;
-  int maxAlt;
+  double distance;
+  double avgSpeed;
+  double topSpeed;
+  double altDiff;
+  double avgAlt;
+  double minAlt;
+  double maxAlt;
   int start;
   int stop;
 
-  List<ExercisePoint> points = List<ExercisePoint>.empty(growable: true);
+  List<ExercisePoint> points = [];
 
   Exercise({
     required this.distance,
@@ -54,140 +57,249 @@ class Exercise {
     required this.minAlt,
     required this.maxAlt,
     required this.start,
-    required this.stop
+    required this.stop,
   });
 
-  Map<String, dynamic> toJson() {
-		return {
-			'distance': distance,
-			'avgSpeed': avgSpeed,
-			'topSpeed': topSpeed,
-			'altDiff': altDiff,
-			'avgAlt': avgAlt,
-			'minAlt': minAlt,
-			'maxAlt': maxAlt,
-			'start': start,
-			'stop': stop,
-			'points': points.map((point) => point.toJson()).toList(),
-		};
-	}
+  Map<String, dynamic> toJson() => {
+        'distance': distance,
+        'avgSpeed': avgSpeed,
+        'topSpeed': topSpeed,
+        'altDiff': altDiff,
+        'avgAlt': avgAlt,
+        'minAlt': minAlt,
+        'maxAlt': maxAlt,
+        'start': start,
+        'stop': stop,
+        'points': points.map((p) => p.toJson()).toList(),
+      };
 }
 
 enum STATUS {
   idle,
-  collecting
+  collecting,
 }
 
 class BackgroundCollectingTask extends Model {
-  static BackgroundCollectingTask of(
-    BuildContext context, {
-    bool rebuildOnChange = false,
-  }) =>
-      ScopedModel.of<BackgroundCollectingTask>(
-        context,
-        rebuildOnChange: rebuildOnChange,
-      );
+  static BackgroundCollectingTask of(BuildContext context, { bool rebuildOnChange = false,}) => ScopedModel.of<BackgroundCollectingTask>(context, rebuildOnChange: rebuildOnChange,);
 
-  final BluetoothConnection _connection;
-  List<int> _buffer = List<int>.empty(growable: true);
+  final BluetoothDevice _device;
+  final BluetoothCharacteristic _writeCharacteristic;
+  final BluetoothCharacteristic _notifyCharacteristic;
+
+  final List<int> _buffer = [];
+  final Box box = Hive.box();
+
+  StreamSubscription<List<int>>? _notificationSubscription;
+  StreamSubscription<BluetoothConnectionState>? _connectionSubscription;
 
   bool inProgress = false;
+  bool _disposed = false;
+  bool _savedCurrentExercise = false;
 
-  final box = Hive.box();
-
-  int expectedSize = 72;
-  int expectedPointSize = 40;
+  final int expectedSize = 72;
+  final int expectedPointSize = 40;
 
   Exercise? currExercise;
   STATUS status = STATUS.idle;
 
-  int readDouble(int index) {
-    final bytes = Uint8List.fromList(
-      _buffer.sublist(index, index + 8),
-    );
+  BackgroundCollectingTask._(this._device, this._writeCharacteristic, this._notifyCharacteristic,) {
+    _connectionSubscription = _device.connectionState.listen((state) {
+      if (state == BluetoothConnectionState.disconnected) {
+        inProgress = false;
+        notifyListeners();
+      }
+    });
 
-    return ByteData.sublistView(bytes).getFloat64(0, Endian.little).toInt();
+    _notificationSubscription =
+        _notifyCharacteristic.onValueReceived.listen(
+      _onDataReceived,
+      onError: (Object error) {
+        debugPrint('BLE notification error: $error');
+      },
+    );
   }
 
-  int readInt64(int index) {
-    final bytes = Uint8List.fromList(
-      _buffer.sublist(index, index + 8),
+  static Future<BackgroundCollectingTask> connect(BluetoothDevice device,) async {
+    if (!device.isConnected) {
+      throw Exception('BLE device is not connected');
+    }
+
+    final services = await device.discoverServices();
+
+    BluetoothCharacteristic? writeCharacteristic;
+    BluetoothCharacteristic? notifyCharacteristic;
+
+    for (final service in services) {
+      if (service.uuid.toString().toLowerCase() !=
+          uartServiceUuid) {
+        continue;
+      }
+
+      for (final characteristic in service.characteristics) {
+        final uuid = characteristic.uuid.toString().toLowerCase();
+
+        if (uuid == uartWriteUuid) {
+          writeCharacteristic = characteristic;
+        } else if (uuid == uartNotifyUuid) {
+          notifyCharacteristic = characteristic;
+        }
+      }
+    }
+
+    if (writeCharacteristic == null) {
+      throw Exception('BLE UART write characteristic not found');
+    }
+
+    if (notifyCharacteristic == null) {
+      throw Exception('BLE UART notify characteristic not found');
+    }
+
+    await notifyCharacteristic.setNotifyValue(true);
+
+    return BackgroundCollectingTask._(
+      device,
+      writeCharacteristic,
+      notifyCharacteristic,
     );
+  }
+
+  double _readDouble(int index) {
+    final bytes = Uint8List.fromList(_buffer);
+
+    return ByteData.sublistView(bytes).getFloat64(index, Endian.little);
+  }
+
+  int _readInt64(int index) {
+    final bytes = Uint8List.fromList(_buffer.sublist(index, index + 8));
 
     return ByteData.sublistView(bytes).getInt64(0, Endian.little);
   }
 
-  BackgroundCollectingTask._fromConnection(this._connection) {
-    _connection.input!.listen((data) {
-      _buffer += data;
+  void _onDataReceived(List<int> data) {
+    if (_disposed || data.isEmpty) return;
 
-      while (true) {
-        // If there is a sample, and it is full sent
-        int index = _buffer.indexOf('t'.codeUnitAt(0));
+    if (ascii.decode(data, allowInvalid: true).trim() == 'DONE') {
+      debugPrint('DONE received');
+      _handleDone();
+      return;
+    }
 
-        if (index >= 0 && _buffer.length - index >= expectedSize && status == STATUS.idle) {
-          final sample = Exercise(distance: readDouble(index), avgSpeed: readDouble(index + 8), topSpeed: readDouble(index + 16), altDiff: readDouble(index + 24), avgAlt: readDouble(index + 32), minAlt: readDouble(index + 40), maxAlt: readDouble(index + 48), start: readInt64(index + 56), stop: readInt64(index + 64),);
-          _buffer.removeRange(0, index + expectedSize);
-          currExercise = sample;
+    _buffer.addAll(data);
 
-          status = STATUS.collecting;
-          notifyListeners();
-        } else if (index >= 0 && _buffer.length - index >= expectedPointSize && status == STATUS.collecting) {
-          final ExercisePoint sample = ExercisePoint(lat: readDouble(index), lng: readDouble(index + 8), alt: readDouble(index + 16), time: readInt64(index + 24), speed: readDouble(index + 32));
+    while (_buffer.isNotEmpty) {
+      // Header is 72 bytes; each point is 40 bytes.
+      final recordSize = status == STATUS.idle ? expectedSize : expectedPointSize;
 
-          currExercise?.points.add(sample);
-          _buffer.removeRange(0, index + expectedPointSize);
-        } else {
-          status = STATUS.idle;
-          box.put(box.keys.length.toString(), currExercise?.toJson());
-          break;
-        }
+      // Wait for the entire record if it spans multiple notifications.
+      if (_buffer.length < recordSize) break;
+
+      if (status == STATUS.idle) {
+        // Parse exercise header.
+        currExercise = Exercise(
+          distance: _readDouble(0),
+          avgSpeed: _readDouble(8),
+          topSpeed: _readDouble(16),
+          altDiff: _readDouble(24),
+          avgAlt: _readDouble(32),
+          minAlt: _readDouble(40),
+          maxAlt: _readDouble(48),
+          start: _readInt64(56),
+          stop: _readInt64(64),
+        );
+
+        _savedCurrentExercise = false;
+        status = STATUS.collecting;
+
+        _buffer.removeRange(0, expectedSize);
+
+        debugPrint('Received exercise header');
+      } else {
+        // Parse one exercise point.
+        final point = ExercisePoint(
+          lat: _readDouble(0),
+          lng: _readDouble(8),
+          alt: _readDouble(16),
+          time: _readInt64(24),
+          speed: _readDouble(32),
+        );
+
+        currExercise?.points.add(point);
+        _buffer.removeRange(0, expectedPointSize);
       }
-    }).onDone(() {
-      inProgress = false;
-      notifyListeners();
-    });
+      // notifyListeners();
+    }
   }
 
-  static Future<BackgroundCollectingTask> connect(
-      BluetoothDevice server) async {
-    final BluetoothConnection connection =
-        await BluetoothConnection.toAddress(server.address);
-    return BackgroundCollectingTask._fromConnection(connection);
-  }
+  Future<void> _sendCommand(String command) async {
+    if (!_device.isConnected) {
+      throw Exception('BLE device is disconnected');
+    }
 
-  void dispose() {
-    _connection.dispose();
+    await _writeCharacteristic.write(
+      ascii.encode(command),
+      withoutResponse: _writeCharacteristic.properties.writeWithoutResponse && !_writeCharacteristic.properties.write,
+    );
   }
 
   Future<void> start() async {
-    inProgress = true;
+    if (!_device.isConnected) {
+      throw Exception('BLE device is disconnected');
+    }
+
     _buffer.clear();
     currExercise = null;
-    notifyListeners();
-    _connection.output.add(ascii.encode('start'));
-    await _connection.output.allSent;
-  }
-
-  Future<void> cancel() async {
-    inProgress = false;
-    notifyListeners();
-    currExercise = null;
-    _connection.output.add(ascii.encode('stop'));
-    await _connection.finish();
-  }
-
-  Future<void> pause() async {
-    inProgress = false;
-    notifyListeners();
-    _connection.output.add(ascii.encode('stop'));
-    await _connection.output.allSent;
-  }
-
-  Future<void> reasume() async {
+    status = STATUS.idle;
+    _savedCurrentExercise = false;
     inProgress = true;
+
     notifyListeners();
-    _connection.output.add(ascii.encode('start'));
-    await _connection.output.allSent;
+
+    await _sendCommand('toggle');
+  }
+
+  Future<void> stop() async {
+    await _sendCommand('toggle');
+  }
+
+  void _handleDone() {
+    _saveCurrentExercise();
+
+    inProgress = false;
+    status = STATUS.idle;
+    _buffer.clear();
+
+    notifyListeners();
+
+    debugPrint('Exercise saved: ${currExercise?.points.length} points');
+
+    inProgress = false;
+    currExercise = null;
+    status = STATUS.idle;
+    _savedCurrentExercise = false;
+    _buffer.clear();
+  }
+
+  void _saveCurrentExercise() {
+    final exercise = currExercise;
+
+    if (exercise == null || _savedCurrentExercise) return;
+
+    box.put(box.keys.length.toString(), exercise.toJson());
+    _savedCurrentExercise = true;
+  }
+
+  Future<void> dispose() async {
+    _disposed = true;
+
+    await _notificationSubscription?.cancel();
+    await _connectionSubscription?.cancel();
+
+    try {
+      await _notifyCharacteristic.setNotifyValue(false);
+    } catch (_) {
+      // The device may already be disconnected.
+    }
+
+    // super.dispose();
   }
 }
