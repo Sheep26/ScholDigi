@@ -126,17 +126,17 @@ void main(void) {
             ssd1306_display_text(ssd1306_handle, 0, buf1, false);
         }
 #endif
-
-        if (getExercise() && getLocationValid() && getSatellites()) {
+        exercise_point_t *current_exercise = getExercise();
+        if (current_exercise && getLocationValid() && getSatellites()) {
             // Check if things have changed or if there just hasn't been a point yet.
-            if (!getExercise()->list || !getExercise()->last || getLat() != getExercise()->last->lat || getLng() != getExercise()->last->lng || getAlititude() != getExercise()->last->alt) {
+            if (!current_exercise->list || !current_exercise->last || getLat() != current_exercise->last->lat || getLng() != current_exercise->last->lng || getAlititude() != current_exercise->last->alt) {
                 // Create pointer for exercise point struct.
                 exercise_point_t *point = (exercise_point_t*) malloc(sizeof(exercise_point_t));
                 assert(point);
 
                 // Set variables.
-                if (!getExercise()->start)
-                    getExercise()->start = time_epoch;
+                if (!current_exercise->start)
+                    current_exercise->start = time_epoch;
 
                 point->lat = getLat();
                 point->lng = getLng();
@@ -145,7 +145,7 @@ void main(void) {
                 point->time = time_epoch;
 
                 // Add point.
-                addExercisePoint(getExercise(), point);
+                addExercisePoint(current_exercise, point);
             }
         }
         
