@@ -108,7 +108,7 @@ void main(void) {
 #endif
 
         if (!digital_read(START_PIN)) {
-            toggleExercise(&time_epoch);
+            toggleExercise();
 
             vTaskDelay(pdMS_TO_TICKS(10));
         }

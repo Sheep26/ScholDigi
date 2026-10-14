@@ -4,6 +4,7 @@
 #include "sdkconfig.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
+#include <exercise.h>
 
 static const char *TAG = "BLE";
 
@@ -19,6 +20,9 @@ static void ble_uart_on_rx(const uint8_t *data, size_t len){
 
     ESP_LOG_BUFFER_HEX(TAG, data, len);
     printf("%s", data);
+
+    if (data == "start" || data == "stop")
+        toggleExercise();
 }
 
 void bluetooth_init() {

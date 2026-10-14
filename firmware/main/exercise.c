@@ -1,6 +1,7 @@
 #include <exercise.h>
 #include <haversine.h>
 #include <stdlib.h>
+#include <bluetooth.h>
 
 ssd1306_handle_t display_handle;
 exercise_t *current_exercise;
@@ -23,7 +24,10 @@ exercise_t *getExercise() {
     return current_exercise;
 }
 
-void toggleExercise(time_t *time_epoch) {
+void toggleExercise() {
+    struct tm current_time = getTime();
+    time_t time_epoch = mktime(&current_time);
+
     if (!current_exercise)
         current_exercise = (exercise_t*) calloc(1, sizeof(exercise_t));
     else {
@@ -60,7 +64,16 @@ void toggleExercise(time_t *time_epoch) {
         current_exercise->stop = *time_epoch;
         // We have calculated all our things so we need to store it now.
 
-        
+        exercise_send_t *send_struct = (exercise_send_t *) calloc(1, sizeof(exercise_send_t));
+        send_struct->distance = current_exercise->distance;
+        send_struct->max_alt = current_exercise->max_alt;
+        send_struct->min_alt = current_exercise->min_alt;
+        send_struct->top_speed = current_exercise->top_speed;
+        send_struct->alt_diff = current_exercise->alt_diff;
+        send_struct->avg_alt = current_exercise->avg_alt;
+        send_struct->avg_speed = current_exercise->avg_speed;
+
+        ble_send_data(*send_struct);
 
         // Free exercise from memory.
         exercise_point_t *pointah = current_exercise->list;
