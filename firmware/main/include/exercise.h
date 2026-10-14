@@ -23,7 +23,7 @@ typedef struct exercise_point {
     double speed;
 
     struct exercise_point *next;
-} exercise_point_t; // 48 bytes - 4
+} exercise_point_t; // 44 bytes - 4
 
 typedef struct {
     double lat;
@@ -31,7 +31,7 @@ typedef struct {
     double alt;
     time_t time;
     double speed;
-} exercise_point_send_t; // 44 bytes
+} exercise_point_send_t; // 40 bytes
 
 typedef struct {
     double distance;

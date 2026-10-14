@@ -82,6 +82,14 @@ void toggleExercise() {
 
         while (pointah) {
             exercise_point_t *next = p->next;
+            exercise_point_send_t *send_point_struct = (exercise_point_send_t *) calloc(1, sizeof(exercise_point_send_t));
+            send_point_struct->alt = next->alt;
+            send_point_struct->lat = next->lat;
+            send_point_struct->lng = next->lng;
+            send_point_struct->speed = next->speed;
+            send_point_struct->time = next->time;
+
+            ble_send_data(send_point_struct, sizeof(exercise_point_send_t));
 
             free(pointah);
             pointah = next;
