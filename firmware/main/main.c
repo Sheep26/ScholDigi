@@ -83,6 +83,76 @@ void setupTimeGPS() {
     timeSetup = 1;
 }
 
+void main(void) {
+    // Loop
+    while (1) {
+        if (!timeSetup)
+            setupTimeGPS();
+
+        struct tm current_time = getTime();
+        time_t time_epoch = mktime(&current_time);
+
+#ifdef DISPLAY
+        if (time_epoch - mktime(&lastButtonPress) > 300 && !sleeping) {
+            sleeping = 1;
+
+            ssd1306_disable_display(ssd1306_handle); // Put display to sleep after 5 minutes of no button presses.
+        }
+
+        if ((!digital_read(WAKE_PIN) || !digital_read(START_PIN)) && sleeping) {
+            sleeping = 0;
+            lastButtonPress = getTime();
+
+            ssd1306_enable_display(ssd1306_handle);
+        }
+#endif
+
+        if (!digital_read(START_PIN)) {
+            toggleExercise(&time_epoch);
+
+            vTaskDelay(pdMS_TO_TICKS(10));
+        }
+
+#ifdef DISPLAY
+        if (rah % 100 == 0) {
+            char buf1[64];
+            snprintf(buf1, sizeof(buf1), "Satelittes: %d", getSatellites());
+
+            char strftime_buf[64];
+            strftime(strftime_buf, sizeof(strftime_buf), "%c", &current_time);
+
+            ssd1306_clear_display(ssd1306_handle, false);
+            ssd1306_display_text(ssd1306_handle, 0, strftime_buf, false);
+            ssd1306_display_text(ssd1306_handle, 0, buf1, false);
+        }
+#endif
+
+        if (getExercise() && getLocationValid() && getSatellites()) {
+            // Check if things have changed or if there just hasn't been a point yet.
+            if (!getExercise()->list || !getExercise()->last || getLat() != getExercise()->last->lat || getLng() != getExercise()->last->lng || getAlititude() != getExercise()->last->alt) {
+                // Create pointer for exercise point struct.
+                exercise_point_t *point = (exercise_point_t*) malloc(sizeof(exercise_point_t));
+                assert(point);
+
+                // Set variables.
+                if (!getExercise()->start)
+                    getExercise()->start = time_epoch;
+
+                point->lat = getLat();
+                point->lng = getLng();
+                point->alt = getAlititude();
+                point->speed = getSpeed();
+                point->time = time_epoch;
+
+                // Add point.
+                addExercisePoint(getExercise(), point);
+            }
+        }
+        
+        rah++;
+    }
+}
+
 void app_main(void) {
     /* Print chip information */
     esp_chip_info_t chip_info;
@@ -180,10 +250,6 @@ void app_main(void) {
     setup_display_handle(ssd1306_handle);
 #endif
 
-    bluetooth_init();
-
-    // Start gps task.
-    xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 0);
     //GPSTask(NULL);
     // Set timezone.
     setenv("TZ", "NZST-12NZDT,M9.5.0/02:00:00,M4.1.0/03:00:00", 1);
@@ -192,75 +258,13 @@ void app_main(void) {
     struct timeval now = { .tv_sec = 1782734400, .tv_usec=0 };
     settimeofday(&now, NULL);
 
-    lastButtonPress = getTime();
+    lastButtonPress = getTime(); 
+    
+    // Start tasks.
+    xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 0);
+    xTaskCreatePinnedToCore(main, "MAIN", 4096, NULL, 5, NULL, 0);  
 
-    // Loop
-    while (1) {
-        if (!timeSetup)
-            setupTimeGPS();
-
-        struct tm current_time = getTime();
-        time_t time_epoch = mktime(&current_time);
-
-#ifdef DISPLAY
-        if (time_epoch - mktime(&lastButtonPress) > 300 && !sleeping) {
-            sleeping = 1;
-
-            ssd1306_disable_display(ssd1306_handle); // Put display to sleep after 5 minutes of no button presses.
-        }
-
-        if ((!digital_read(WAKE_PIN) || !digital_read(START_PIN)) && sleeping) {
-            sleeping = 0;
-            lastButtonPress = getTime();
-
-            ssd1306_enable_display(ssd1306_handle);
-        }
-#endif
-
-        if (!digital_read(START_PIN)) {
-            toggleExercise(&time_epoch);
-
-            vTaskDelay(pdMS_TO_TICKS(10));
-        }
-
-#ifdef DISPLAY
-        if (rah % 100 == 0) {
-            char buf1[64];
-            snprintf(buf1, sizeof(buf1), "Satelittes: %d", getSatellites());
-
-            char strftime_buf[64];
-            strftime(strftime_buf, sizeof(strftime_buf), "%c", &current_time);
-
-            ssd1306_clear_display(ssd1306_handle, false);
-            ssd1306_display_text(ssd1306_handle, 0, strftime_buf, false);
-            ssd1306_display_text(ssd1306_handle, 0, buf1, false);
-        }
-#endif
-
-        if (getExercise() && getLocationValid() && getSatellites()) {
-            // Check if things have changed or if there just hasn't been a point yet.
-            if (!getExercise()->list || !getExercise()->last || getLat() != getExercise()->last->lat || getLng() != getExercise()->last->lng || getAlititude() != getExercise()->last->alt) {
-                // Create pointer for exercise point struct.
-                exercise_point_t *point = (exercise_point_t*) malloc(sizeof(exercise_point_t));
-                assert(point);
-
-                // Set variables.
-                if (!getExercise()->start)
-                    getExercise()->start = time_epoch;
-
-                point->lat = getLat();
-                point->lng = getLng();
-                point->alt = getAlititude();
-                point->speed = getSpeed();
-                point->time = time_epoch;
-
-                // Add point.
-                addExercisePoint(getExercise(), point);
-            }
-        }
-        
-        rah++;
-    }
+    bluetooth_init();
 
     // Reset ESP32 incase while loop ever exits.
     esp_vfs_littlefs_unregister(fs_conf.partition_label);

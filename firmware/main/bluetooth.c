@@ -7,6 +7,10 @@
 
 static const char *TAG = "BLE";
 
+void ble_send_data(void *data) {
+    ble_uart_tx(data, sizeof(data));
+}
+
 static void ble_uart_on_rx(const uint8_t *data, size_t len){
     ESP_LOGI(TAG, "rx len: %u bytes", (unsigned) len);
 
@@ -14,7 +18,7 @@ static void ble_uart_on_rx(const uint8_t *data, size_t len){
         return;
 
     ESP_LOG_BUFFER_HEX(TAG, data, len);
-    ble_uart_tx(data, len);  /* echo back */
+    printf("%s", data);
 }
 
 void bluetooth_init() {
