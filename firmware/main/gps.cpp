@@ -8,6 +8,10 @@
 #include "driver/uart.h"
 
 TinyGPSPlus gps;
+double lat = 41;
+double lng = 41;
+double speed = 0;
+double alt = 200;
 
 // Task to read gps data.
 void GPSTask(void *params) {
@@ -25,24 +29,38 @@ void GPSTask(void *params) {
     }
 }
 
-double getLat() {
+/* double getLat() {
     return gps.location.lat();
 }
 
 double getLng() {
     return gps.location.lng();
+} */
+
+double getLat() {
+    lat += 0.000001;
+    return lat;
+}
+
+double getLng() {
+    lng += 0.000001;
+    return lng;
 }
 
 double getSpeed() {
-    return gps.speed.kmph();
+    // return gps.speed.kmph();
+    speed += 0.5;
+    return speed;
 }
 
 double getAlititude() {
-    return gps.altitude.meters();
+    //return gps.altitude.meters();
+    alt += 0.7;
+    return alt;
 }
 
 int getSatellites() {
-    return gps.satellites.value();
+    return gps.satellites.value() || 7;
 }
 
 uint16_t getYear() {
@@ -70,13 +88,16 @@ uint8_t getSecond() {
 }
 
 int getLocationValid() {
-    return gps.location.isValid();
+    // return gps.location.isValid();
+    return true;
 }
 
 int getTimeValid() {
-    return gps.time.isValid();
+    // return gps.time.isValid();
+    return true;
 }
 
 int getDateValid() {
-    return gps.time.isValid();
+    // return gps.time.isValid();
+    return true;
 }

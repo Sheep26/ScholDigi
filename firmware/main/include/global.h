@@ -1,0 +1,1 @@
+extern int display_next_update;

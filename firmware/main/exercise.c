@@ -5,6 +5,11 @@
 #include <time.h>
 #include <sys/time.h>
 #include <gettime.h>
+#include <string.h>
+#include <global.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include <stdio.h>
 
 ssd1306_handle_t display_handle;
 exercise_t *current_exercise;
@@ -14,11 +19,15 @@ void setup_display_handle(ssd1306_handle_t handle) {
 }
 
 void addExercisePoint(exercise_t *exercise, exercise_point_t *point) {
-    if (!exercise->list)
-        exercise->list = point;
+    if (!exercise || !point)
+        return;
+
+    point->next = NULL;
 
     if (exercise->last)
         exercise->last->next = point;
+    else
+        exercise->list = point;
 
     exercise->last = point;
 }
@@ -28,74 +37,79 @@ exercise_t *getExercise() {
 }
 
 void toggleExercise() {
-    struct tm current_time = getTime();
-    time_t time_epoch = mktime(&current_time);
+    time_t time_epoch = getTimeEpoch();
 
-    if (!current_exercise)
+    if (!current_exercise) {
         current_exercise = (exercise_t*) calloc(1, sizeof(exercise_t));
+        current_exercise->start = time_epoch;
+    }
     else {
-        // Handle putting exercise into storage eventually.
-        exercise_point_t *p = current_exercise->list;
-        exercise_point_t *l = (void*) 0;
+        if (current_exercise->list) {
+            exercise_point_t *p = current_exercise->list;
 
-        int div = 0;
+            while (p && p->next) {
+                double segment_distance = distanceBetweenPoints(p, p->next);
+                current_exercise->distance += segment_distance;
+                p = p->next;
+            }
 
-        while (p) {
-            // Add exercise distance.
-            if (l) {
-                current_exercise->distance += distanceBetweenPoints(l, p);
+            p = current_exercise->list;
+            int div = 0;
 
-                l = (void*) 0;
-            } else
-                l = p;
+            while (p) {
+                current_exercise->max_alt = p->alt > current_exercise->max_alt ? p->alt : current_exercise->max_alt;
+                current_exercise->min_alt = (p->alt < current_exercise->min_alt || !current_exercise->min_alt) ? p->alt : current_exercise->min_alt;
+                current_exercise->top_speed = p->speed > current_exercise->top_speed ? p->speed : current_exercise->top_speed;
 
-            current_exercise->max_alt = p->alt > current_exercise->max_alt ? p->alt : current_exercise->max_alt;
-            current_exercise->min_alt = (p->alt < current_exercise->min_alt || !current_exercise->min_alt) ? p->alt : current_exercise->min_alt;
-            current_exercise->top_speed = p->speed > current_exercise->top_speed ? p->speed : current_exercise->top_speed;
+                current_exercise->alt_diff = current_exercise->max_alt - current_exercise->min_alt;
+                current_exercise->avg_alt += p->alt;
+                current_exercise->avg_speed += p->speed;
 
-            current_exercise->alt_diff = current_exercise->max_alt - current_exercise->min_alt;
-            current_exercise->avg_alt += p->alt;
-            current_exercise->avg_speed += p->speed;
+                div++;                    
+                p = p->next;
+            }
 
-            div++;                    
-            p = p->next;
-        }
+            current_exercise->avg_alt = current_exercise->avg_alt / div;
+            current_exercise->avg_speed = current_exercise->avg_speed / div;
 
-        current_exercise->avg_alt = current_exercise->avg_alt / div;
-        current_exercise->avg_speed = current_exercise->avg_speed / div;
+            current_exercise->stop = time_epoch;
 
-        current_exercise->stop = time_epoch;
+            exercise_send_t *send_struct = (exercise_send_t *) malloc(sizeof(exercise_send_t));
+            memcpy(send_struct, current_exercise, sizeof(exercise_send_t));
 
-        exercise_send_t *send_struct = (exercise_send_t *) malloc(sizeof(exercise_send_t));
-        send_struct->distance = current_exercise->distance;
-        send_struct->max_alt = current_exercise->max_alt;
-        send_struct->min_alt = current_exercise->min_alt;
-        send_struct->top_speed = current_exercise->top_speed;
-        send_struct->alt_diff = current_exercise->alt_diff;
-        send_struct->avg_alt = current_exercise->avg_alt;
-        send_struct->avg_speed = current_exercise->avg_speed;
+            ble_send_data(send_struct, sizeof(exercise_send_t));
 
-        ble_send_data(send_struct, sizeof(exercise_send_t));
+            // Send exercise points.
+            exercise_point_t *pointah = current_exercise->list;
 
-        // Free exercise from memory.
-        exercise_point_t *pointah = current_exercise->list;
+            while (pointah) {
+                exercise_point_t *next = pointah->next;
+                exercise_point_send_t *send_point_struct = (exercise_point_send_t *) malloc(sizeof(exercise_point_send_t));
+                memcpy(send_point_struct, pointah, sizeof(exercise_point_send_t));
 
-        while (pointah) {
-            exercise_point_t *next = p->next;
-            exercise_point_send_t *send_point_struct = (exercise_point_send_t *) malloc(sizeof(exercise_point_send_t));
-            send_point_struct->alt = next->alt;
-            send_point_struct->lat = next->lat;
-            send_point_struct->lng = next->lng;
-            send_point_struct->speed = next->speed;
-            send_point_struct->time = next->time;
+                ble_send_data(send_point_struct, sizeof(exercise_point_send_t));
 
-            ble_send_data(send_point_struct, sizeof(exercise_point_send_t));
+                free(pointah);
+                //free(send_point_struct);
+                pointah = next;
+            }
 
-            free(pointah);
-            pointah = next;
+            free(send_struct);
+
+            display_next_update = 3000;
+            ssd1306_clear_display(display_handle, false);
+
+            char buf1[64];
+            snprintf(buf1, sizeof(buf1), "Distance: %dm", (int) current_exercise->distance);
+
+            ssd1306_display_text(display_handle, 2, buf1, false);
+            ssd1306_clear_display(display_handle, false);
         }
 
         free(current_exercise);
         current_exercise = (void*) 0; // Set current exercise to null instead of having it reference unallocated memory.
+
+        char *done = "DONE";
+        ble_send_data(done, sizeof(done));
     }
 }

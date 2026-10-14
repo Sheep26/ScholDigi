@@ -9,3 +9,10 @@ struct tm getTime() {
 
     return timeinfo;
 }
+
+time_t getTimeEpoch() {
+    time_t now;
+    time(&now);
+
+    return now;
+}

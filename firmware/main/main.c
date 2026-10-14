@@ -7,7 +7,6 @@
 #include <exercise.h>
 #include <ssd1306.h>
 #include <haversine.h>
-#include <esp_littlefs.h>
 #include <config.h>
 #include <gpio.h>
 #include "sdkconfig.h"
@@ -21,6 +20,7 @@
 #include <bluetooth.h>
 #include "nvs_flash.h"
 #include <gettime.h>
+#include <global.h>
 
 int timeSetup = 0;
 int locationValid = 0;
@@ -28,6 +28,7 @@ int sleeping = 0;
 struct tm lastButtonPress;
 
 int rah = 0;
+int display_next_update = 0;
 
 i2c_master_bus_handle_t i2c_bus_handle;
 ssd1306_handle_t ssd1306_handle;
@@ -56,7 +57,7 @@ void setupTimeGPS() {
     if (!getDateValid() || !getTimeValid())
         return;
 
-    struct tm tm;
+    struct tm tm = {0};
     tm.tm_year = getYear() - 1990; // Current year minus EPOCH start date.
     tm.tm_mon = getMonth();
     tm.tm_mday = getDay();
@@ -74,56 +75,36 @@ void setupTimeGPS() {
     timeSetup = 1;
 }
 
-void loop(void *params) {
-    // Loop
+void display_task(void *params) {
     while (1) {
-        if (!timeSetup)
-            setupTimeGPS();
+        if (display_next_update < 10) {
+            struct tm current_time = getTime();
 
-        struct tm current_time = getTime();
-        time_t time_epoch = mktime(&current_time);
-
-#ifdef DISPLAY
-        if (time_epoch - mktime(&lastButtonPress) > 300 && !sleeping) {
-            sleeping = 1;
-
-            ssd1306_disable_display(ssd1306_handle); // Put display to sleep after 5 minutes of no button presses.
-        }
-
-        if ((!digital_read(WAKE_PIN) || !digital_read(START_PIN)) && sleeping) {
-            sleeping = 0;
-            lastButtonPress = getTime();
-
-            ssd1306_enable_display(ssd1306_handle);
-        }
-#endif
-
-        if (!digital_read(START_PIN)) {
-            toggleExercise();
-
-            vTaskDelay(pdMS_TO_TICKS(10));
-        }
-
-#ifdef DISPLAY
-        if (rah % 100 == 0) {
             char buf1[64];
             snprintf(buf1, sizeof(buf1), "Satelittes: %d", getSatellites());
 
             char strftime_buf[64];
-            strftime(strftime_buf, sizeof(strftime_buf), "%c", &current_time);
+            strftime(strftime_buf, sizeof(strftime_buf), "%H:%M:%S", &current_time);
 
-            ssd1306_clear_display(ssd1306_handle, false);
             ssd1306_display_text(ssd1306_handle, 0, strftime_buf, false);
-            ssd1306_display_text(ssd1306_handle, 0, buf1, false);
+            ssd1306_display_text(ssd1306_handle, 1, buf1, false);
         }
-#endif
+
+        vTaskDelay(pdMS_TO_TICKS(1000));
+        display_next_update -= 1000;
+    }
+}
+
+void exercise_task(void *params) {
+    while (1) {
+        time_t time_epoch = getTimeEpoch();
         exercise_t *current_exercise = getExercise();
 
         if (current_exercise && getLocationValid() && getSatellites()) {
             // Check if things have changed or if there just hasn't been a point yet.
             if (!current_exercise->list || !current_exercise->last || getLat() != current_exercise->last->lat || getLng() != current_exercise->last->lng || getAlititude() != current_exercise->last->alt) {
                 // Create pointer for exercise point struct.
-                exercise_point_t *point = (exercise_point_t*) malloc(sizeof(exercise_point_t));
+                exercise_point_t *point = (exercise_point_t*) calloc(1, sizeof(exercise_point_t));
                 assert(point);
 
                 // Set variables.
@@ -142,6 +123,7 @@ void loop(void *params) {
         }
         
         rah++;
+        vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
 
@@ -166,14 +148,6 @@ void app_main(void) {
     printf("%" PRIu32 "MB %s flash\n", flash_size / (uint32_t)(1024 * 1024), (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
     printf("Minimum free heap size: %" PRIu32 " bytes\n", esp_get_minimum_free_heap_size());
 
-    // Setup littlefs.
-    esp_vfs_littlefs_conf_t fs_conf = {
-        .base_path = "/littlefs",
-        .partition_label = "fs_storage",
-        .format_if_mount_failed = 1,
-        .dont_mount = 0
-    };
-
     esp_err_t ret = nvs_flash_init();
 
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -182,13 +156,6 @@ void app_main(void) {
     }
 
     ESP_ERROR_CHECK(ret);
-
-    /*ESP_ERROR_CHECK(esp_vfs_littlefs_register(&fs_conf));
-
-    size_t total = 0, used = 0;
-    ESP_ERROR_CHECK(esp_littlefs_info(fs_conf.partition_label, &total, &used));
-
-    printf("Total flash storage: %d, Used flash storage: %d", total, used);*/
 
     // Initalize GPS serial connection.
     uart_config_t uart_config = {
@@ -254,13 +221,25 @@ void app_main(void) {
     
     // Start tasks.
     xTaskCreatePinnedToCore(GPSTask, "GPS", 4096, NULL, 5, NULL, 0);
-    xTaskCreatePinnedToCore(loop, "MAIN", 4096, NULL, 5, NULL, 0);  
+    xTaskCreatePinnedToCore(exercise_task, "MAIN", 4096, NULL, 5, NULL, 0);
+
+#ifdef DISPLAY
+    xTaskCreatePinnedToCore(display_task, "DISPLAY", 4096, NULL, 5, NULL, 0);
+#endif
 
     bluetooth_init();
 
+    while (1) {
+        if (!timeSetup)
+            setupTimeGPS();
+        else
+            break;
+
+        vTaskDelay(pdMS_TO_TICKS(5000));
+    }
+
     // Reset ESP32 incase while loop ever exits.
-    esp_vfs_littlefs_unregister(fs_conf.partition_label);
-    ssd1306_delete(ssd1306_handle);
-    fflush(stdout);
-    esp_restart();
+    //ssd1306_delete(ssd1306_handle);
+    //fflush(stdout);
+    //esp_restart();
 }

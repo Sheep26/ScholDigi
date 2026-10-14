@@ -32,7 +32,7 @@ void ble_uart_on_rx(const uint8_t *data, size_t len){
     while (n > 0 && (buf[n - 1] == '\r' || buf[n - 1] == '\n'))
         buf[--n] = '\0';
 
-    if (strcmp(buf, "start") == 0 || strcmp(buf, "stop") == 0)
+    if (strcmp(buf, "toggle") == 0)
         toggleExercise();
 }
 
@@ -47,7 +47,7 @@ void bluetooth_init() {
     snprintf(name, sizeof(name), "%s-%02X%02X", CONFIG_BLE_UART_DEVICE_NAME_PREFIX, mac[4], mac[5]);
 
     ESP_ERROR_CHECK(ble_uart_install(&(ble_uart_config_t){
-        .encrypted      = true,
+        .encrypted      = false,
         .device_name    = name,
         .ble_uart_on_rx = ble_uart_on_rx,
     }));
