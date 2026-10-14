@@ -21,8 +21,11 @@ static void ble_uart_on_rx(const uint8_t *data, size_t len){
     ESP_LOG_BUFFER_HEX(TAG, data, len);
     printf("%s", data);
 
-    if (data == "start" || data == "stop")
+    if (data == "start" || data == "stop") {
         toggleExercise();
+
+        ble_send_data(data)''
+    }
 }
 
 void bluetooth_init() {
